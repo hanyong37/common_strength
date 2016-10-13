@@ -1,0 +1,19 @@
+default: &default
+  adapter: mysql2
+  encoding: utf8
+  username: root
+  password: chenxi
+  host: 127.0.0.1
+  port: 3306
+
+development:
+  <<: *default
+  database: commonstrength_dev
+
+test:
+  <<: *default
+  database: commonstrength_test
+
+production:
+  <<: *default
+  database: commonstrength
