@@ -2,17 +2,17 @@ require 'mina/bundler'
 require 'mina/rails'
 require 'mina/git'
 # require 'mina/rbenv'  # for rbenv support. (http://rbenv.org)
-# require 'mina/rvm'    # for rvm support. (http://rvm.io)
+require 'mina/rvm'    # for rvm support. (http://rvm.io)
 
 # Basic settings:
 #   domain       - The hostname to SSH to.
 #   deploy_to    - Path to deploy into.
 #   repository   - Git repo to clone from. (needed by mina/git)
 #   branch       - Branch name to deploy. (needed by mina/git)
-
-set :domain, 'foobar.com'
-set :deploy_to, '/var/www/foobar.com'
-set :repository, 'git://...'
+set :term_mode, :nil
+set :domain, '123.207.151.199'
+set :deploy_to, '/var/www/common_strength/api'
+set :repository, 'https://github.com/hanyong37/common_strength.git'
 set :branch, 'master'
 
 # For system-wide RVM install.
@@ -23,7 +23,8 @@ set :branch, 'master'
 set :shared_paths, ['config/database.yml', 'config/secrets.yml', 'log']
 
 # Optional settings:
-#   set :user, 'foobar'    # Username in the server to SSH to.
+   set :user, 'csadmin'    # Username in the server to SSH to.
+   set :password, 'Aa121212'
 #   set :port, '30000'     # SSH port number.
 #   set :forward_agent, true     # SSH forward_agent.
 
@@ -35,7 +36,7 @@ task :environment do
   # invoke :'rbenv:load'
 
   # For those using RVM, use this to load an RVM version@gemset.
-  # invoke :'rvm:use[ruby-1.9.3-p125@default]'
+   invoke :'rvm:use[ruby-2.3.1@cs]'
 end
 
 # Put any custom mkdir's in here for when `mina setup` is ran.

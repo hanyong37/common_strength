@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   #admin user resources
   namespace :admin do
+    resources :sessions, only: [:create, :destroy]
     resources :users
     resources :settings, only: [:index, :update]
     resources :customers

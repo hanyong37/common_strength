@@ -3,9 +3,13 @@ title: API Reference
 
 language_tabs:
   - shell
+  - ruby
+  - python
+  - javascript
 
 toc_footers:
-  - Commonstrength Project
+  - <a href='#'>Sign Up for a Developer Key</a>
+  - <a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a>
 
 includes:
   - errors
@@ -23,16 +27,32 @@ This example API documentation page was created with [Slate](https://github.com/
 
 # Authentication
 
-> To authorize, use this code:
-
+> 使用post方法登录：
 
 ```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
+curl -i -X POST -d "user[full_name]=chenxi&user[password]=1234" http://localhost:3000/admin/sessions
 ```
 
-> Make sure to replace `meowmeowmeow` with your API key.
+> 登录成功后返回Token:
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Fluffums",
+    "breed": "calico",
+    "fluffiness": 6,
+    "cuteness": 7
+  },
+  {
+    "id": 2,
+    "name": "Max",
+    "breed": "unknown",
+    "fluffiness": 5,
+    "cuteness": 10
+  }
+]
+```
 
 Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
 
@@ -48,11 +68,31 @@ You must replace <code>meowmeowmeow</code> with your personal API key.
 
 ## Get All Kittens
 
+```ruby
+require 'kittn'
+
+api = Kittn::APIClient.authorize!('meowmeowmeow')
+api.kittens.get
+```
+
+```python
+import kittn
+
+api = kittn.authorize('meowmeowmeow')
+api.kittens.get()
+```
+
 ```shell
 curl "http://example.com/api/kittens"
   -H "Authorization: meowmeowmeow"
 ```
 
+```javascript
+const kittn = require('kittn');
+
+let api = kittn.authorize('meowmeowmeow');
+let kittens = api.kittens.get();
+```
 
 > The above command returns JSON structured like this:
 

@@ -1,4 +1,4 @@
-source 'https://rubygems.org'
+source 'https://ruby.taobao.org/'
 
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
@@ -36,3 +36,4 @@ gem 'active_model_serializers'
 gem 'mysql2'
 gem 'bcrypt'
 gem 'mina'
+gem 'kaminari'
