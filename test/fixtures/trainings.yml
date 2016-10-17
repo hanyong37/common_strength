@@ -1,7 +1,6 @@
 <% 6.times do |i| %>
 <% 25.times do |n| %>
 trainng_<%= i %>_<%= n %>:
-  user: <%= "user_#{i}" %>
   booking_status: <%= i % 3 %>
   training_status: <%= i % 4 %>
 <% end %>

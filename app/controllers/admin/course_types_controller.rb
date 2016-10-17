@@ -1,3 +1,4 @@
+module Admin
 class CourseTypesController < ApplicationController
   before_action :set_course_type, only: [:show, :update, :destroy]
 
@@ -48,4 +49,5 @@ class CourseTypesController < ApplicationController
     def course_type_params
       params.require(:course_type).permit(:name, :description)
     end
+end
 end

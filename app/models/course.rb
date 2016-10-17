@@ -1,3 +1,3 @@
 class Course < ApplicationRecord
-  belongs_to :course_type
+  belongs_to :type, class_name: 'CourseType'
 end

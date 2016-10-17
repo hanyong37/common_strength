@@ -1,11 +1,22 @@
 Rails.application.routes.draw do
-  resources :customers
-  resources :stores
-  resources :course_types
+  #admin user resources
+  namespace :admin do
+    resources :users
+    resources :settings, only: [:index, :update]
+    resources :customers
+    resources :stores, only: [:index, :create, :update, :destroy]
+    resources :course_types, only: [:index, :create, :update, :destroy]
+    resources :courses, only: [:index, :create, :update, :destroy]
+    resources :schedules, only: [:index, :create, :update, :destroy]
+    resources :trainings
+  end
+
+  namespace :weixin do
+    resources :sessions, only: [:create, :destory]
+    resources :schedules, only: [:index, :destory]
+    resources :trainings, only: [:index, :update]
+  end
+
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
-  resources :settings
-  resources :courses
-  resources :trainings
-  resources :users
 end
 

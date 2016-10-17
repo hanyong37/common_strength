@@ -6,7 +6,7 @@ class UsersControllerTest < ActionController::TestCase
   #   assert true
   # end
   test "Should get valid list of users" do
-    get :index
+    get '/admin/users'
     assert_response :success
     assert_equal response.content_type, 'application/vnd.api+json'
     jdata = JSON.parse response.body
