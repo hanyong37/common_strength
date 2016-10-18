@@ -1,4 +1,4 @@
 class Customer < ApplicationRecord
-  validates :name, :weixin, :telphone, absence: false
-  has_many :trainings
+  validates :name, :weixin, :mobile, presence: true, uniqueness: true
+  has_many :trainings, dependent: :restrict_with_error
 end

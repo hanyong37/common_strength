@@ -18,9 +18,9 @@ class Admin::CustomersController < Admin::ApplicationController
     @customer = Customer.new(customer_params)
 
     if @customer.save
-      render json: @customer, status: :created, location: @customer
+      render json: @customer, status: :created
     else
-      render json: @customer.errors, status: :unprocessable_entity
+      render_error(@customer, :unprocessable_entity)
     end
   end
 
@@ -29,13 +29,13 @@ class Admin::CustomersController < Admin::ApplicationController
     if @customer.update(customer_params)
       render json: @customer
     else
-      render json: @customer.errors, status: :unprocessable_entity
+      render_error(@customer, :unprocessable_entity)
     end
   end
 
   # DELETE /customers/1
   def destroy
-    @customer.destroy
+    @customer.destroy || render_error(@customer,:unprocessable_entity)
   end
 
   private
