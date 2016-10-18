@@ -1,4 +1,4 @@
-class TrainingsController < ApplicationController
+class Admin::TrainingsController < Admin::ApplicationController
   before_action :set_training, only: [:show, :update, :destroy]
 
   # GET /trainings

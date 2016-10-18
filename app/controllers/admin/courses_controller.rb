@@ -1,5 +1,4 @@
-module Admin
-class CoursesController < ApplicationController
+class Admin::CoursesController < Admin::ApplicationController
   before_action :set_course, only: [:show, :update, :destroy]
 
   # GET /courses
@@ -49,5 +48,4 @@ class CoursesController < ApplicationController
     def course_params
       params.fetch(:course, {})
     end
-end
 end

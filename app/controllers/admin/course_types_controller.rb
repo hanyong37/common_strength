@@ -1,5 +1,4 @@
-module Admin
-class CourseTypesController < ApplicationController
+class Admin::CourseTypesController < Admin::ApplicationController
   before_action :set_course_type, only: [:show, :update, :destroy]
 
   # GET /course_types
@@ -40,14 +39,13 @@ class CourseTypesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_course_type
-      @course_type = CourseType.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_course_type
+    @course_type = CourseType.find(params[:id])
+  end
 
-    # Only allow a trusted parameter "white list" through.
-    def course_type_params
-      params.require(:course_type).permit(:name, :description)
-    end
-end
+  # Only allow a trusted parameter "white list" through.
+  def course_type_params
+    params.require(:course_type).permit(:name, :description)
+  end
 end
