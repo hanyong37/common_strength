@@ -13,6 +13,9 @@ settings = Setting.create([
   {key: queue_limit_number, value: '7'},
 ])
 
+users = Users.create([
+  {full_name: 'admin', password:'1234'}
+])
 customers = Customer.create([
   {name: '张三', weixin: 'wx123456', mobile: '13912345678'},
   {name: '李四', weixin: 'wx234567', mobile: '18912345678'}

@@ -32,4 +32,9 @@ class Admin::ApplicationController < ActionController::API
     render json: resource, status: status, adapter: :json_api,
       serializer: ActiveModel::Serializer::ErrorSerializer
   end
+
+  def api_error(opts = {})
+    render head: :unauthorized, status: opts[:status]
+  end
+
 end

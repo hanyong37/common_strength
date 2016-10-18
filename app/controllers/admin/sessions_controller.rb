@@ -13,7 +13,6 @@ class Admin::SessionsController < Admin::ApplicationController
   def destroy
     self.current_user = null
   end
-
   private
   def create_params
     params.require(:user).permit(:full_name,:password)
