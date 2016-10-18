@@ -1,5 +1,6 @@
 class Admin::ApplicationController < ActionController::API
   #before_action :check_header
+  before_action :validate_user
   attr_accessor :current_user
 
   private

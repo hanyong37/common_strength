@@ -1,8 +1,6 @@
 class Admin::UsersController < Admin::ApplicationController
-  before_action :validate_user
   before_action :validate_type, only: [:create, :update]
   before_action :set_user, only: [:show, :update, :destroy]
-
 
   def index
     users = User.all
