@@ -1,2 +1,2 @@
-class Weixin::HomeController < ApplicationController
+class Weixin::HomeController < Weixin::ApplicationController
 end

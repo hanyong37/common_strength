@@ -1,2 +1,2 @@
-class Weixin::SchedulesController < ApplicationController
+class Weixin::SchedulesController < Weixin::ApplicationController
 end

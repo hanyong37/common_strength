@@ -1,2 +1,2 @@
-class Weixin::SessionsController < ApplicationController
+class Weixin::SessionsController < Weixin::ApplicationController
 end
