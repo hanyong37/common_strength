@@ -86,42 +86,61 @@ URI |  /admin/customers
 参数 | 无
 消息 | 无
 
-> 返回Jason: 
+> 返回Jason:
+
+>  "membership-type": "time_card", 时间卡  
+>  "membership-type": "measured_card", 次卡
 
 ```json
 
 {
-    "data": [
-        {
-            "id": "1",
-            "type": "customers",
-            "attributes": {
-                "name": "wang",
-                "mobile": "13912341324",
-                "weixin": "sdfhsdfn"
-            },
-            "relationships": {
-                "trainings": {
-                    "data": []
-                }
+  "data": [
+    {
+      "id": "1",
+      "type": "customers",
+      "attributes": {
+        "name": "张三",
+        "mobile": "13912345678",
+        "weixin": "wx123456",
+        "membership-type": "time_card",
+        "store-id": 1,
+        "membership-remaining-times": null,
+        "membership-duedate": "2010-12-31",
+        "store-name": "中关村店"
+      },
+      "relationships": {
+        "trainings": {
+          "data": [
+            {
+              "id": "1",
+              "type": "trainings"
             }
-        },
-        {
-            "id": "2",
-            "type": "customers",
-            "attributes": {
-                "name": "Li Si",
-                "mobile": "13923452345",
-                "weixin": "lisi_weixin"
-            },
-            "relationships": {
-                "trainings": {
-                    "data": []
-                }
-            }
+          ]
         }
-    ]
+      }
+    },
+    {
+      "id": "2",
+      "type": "customers",
+      "attributes": {
+        "name": "李四",
+        "mobile": "18912345678",
+        "weixin": "wx234567",
+        "membership-type": "measured_card",
+        "store-id": 2,
+        "membership-remaining-times": 20,
+        "membership-duedate": null,
+        "store-name": "大望路店"
+      },
+      "relationships": {
+        "trainings": {
+          "data": []
+        }
+      }
+    }
+  ]
 }
+
 
 ```
 
@@ -139,22 +158,31 @@ URI |  /admin/customers/:id
 
 ```json
 {
-    "data": {
-        "id": "1",
-        "type": "customers",
-        "attributes": {
-            "name": "wang",
-            "mobile": "13912341324",
-            "weixin": "sdfhsdfn"
-        },
-        "relationships": {
-            "trainings": {
-                "data": []
-            }
-        }
+  "data": {
+    "id": "1",
+    "type": "customers",
+    "attributes": {
+      "name": "张三",
+      "mobile": "13912345678",
+      "weixin": "wx123456",
+      "membership-type": "time_card",
+      "store-id": 1,
+      "membership-remaining-times": null,
+      "membership-duedate": "2010-12-31",
+      "store-name": "中关村店"
+    },
+    "relationships": {
+      "trainings": {
+        "data": [
+          {
+            "id": "1",
+            "type": "trainings"
+          }
+        ]
+      }
     }
+  }
 }
-
 ```
 
 
@@ -164,35 +192,44 @@ URI |  /admin/customers/:id
 |  Method| POST
 |  URI|  /admin/customers/
 |  参数类型| form-data
-| 参数| * customer[name] <br> * customer[mobile] <br> * customer[weixin] <br>
+| 参数| customer[name]:必填，不重复 <br> customer[mobile]:必填，不重复  <br> customer[weixin]:必填，不重复 <br> customer[store_id]: 必填，store必须存在。 <br> customer[membership_type] 必填, <br> ---'measured_card' 表示次卡，'time_card' 表示时间卡 <br> customer[membership_remaining_times]: 前端校验，如果是次卡则必填； <br> customer[membership_duedate]: 前端校验，如果是时间卡则必填； <br>
+
+
+
 消息：| 201：成功 <br> 400: 参数错误（没有包含customer参数）<br> 422: 验证没通过
 
 > 成功创建后返回201：
 
 ```json
-{
-    "data": {
-        "id": "1",
-        "type": "customers",
-        "attributes": {
-            "name": "wang",
-            "mobile": "13912341324",
-            "weixin": "sdfhsdfn"
-        },
-        "relationships": {
-            "trainings": {
-                "data": []
-            }
-        }
-    }
-}
 
+{
+  "data": {
+    "id": "10",
+    "type": "customers",
+    "attributes": {
+      "name": "chenxi2",
+      "mobile": "1234423423",
+      "weixin": "weixin1234",
+      "membership-type": "time_card",
+      "store-id": 1,
+      "membership-remaining-times": null,
+      "membership-duedate": null,
+      "store-name": "中关村店"
+    },
+    "relationships": {
+      "trainings": {
+        "data": []
+      }
+    }
+  }
+}
 ```
 
 > 未通过验证的返回422：
->> "pointer": "/data/attributes/mobile" ：字段名称为mobile   
-> "detail": "can't be blank" =>  不能为空   
-> "detail": "has already been taken"  => 不能重复  
+>> "pointer": "/data/attributes/mobile" ：字段名称为mobile
+> "detail": "can't be blank" =>  不能为空
+> "detail": "has already been taken"  => 不能重复
+> "detail": "must exist" => 关联数据必须存在
 
 ```json
 {
@@ -249,29 +286,14 @@ URI |  /admin/customers/:id
 |  Method|  PUT
 |  URI|  /admin/customers/[id]
 |  参数类型| form-data
-| 参数| customer[name] <br> customer[mobile] <br> customer[weixin] <br> --以上参数至少传一个。
+| 参数| customer[name]<br> * customer[mobile]<br> * customer[weixin]<br> customer[store_id]<br> * customer[membership_type]<br> customer[membership_remaining_times]<br> customer[membership_duedate]<br>--以上参数至少传一个。
 消息：| 200: 更新成功 <br> 404:未找到资源 <br> 422: 验证没通过
+
 > 成功后返回200，以及更新后的信息：
 
-```json
-{
-  "data": {
-    "id": "6",
-    "type": "customers",
-    "attributes": {
-      "name": "王宝强",
-      "mobile": "138000123",
-      "weixin": "wangbaoqiang"
-    },
-    "relationships": {
-      "trainings": {
-        "data": []
-      }
-    }
-  }
-}
 
-```
+
+
 
 
 # 后台用户 - user
