@@ -18,9 +18,9 @@ class Admin::CourseTypesController < Admin::ApplicationController
     @course_type = CourseType.new(course_type_params)
 
     if @course_type.save
-      render json: @course_type, status: :created, location: @course_type
+      render json: @course_type, status: :created
     else
-      render json: @course_type.errors, status: :unprocessable_entity
+      render_error( @course_type, :unprocessable_entity)
     end
   end
 
@@ -35,7 +35,7 @@ class Admin::CourseTypesController < Admin::ApplicationController
 
   # DELETE /course_types/1
   def destroy
-    @course_type.destroy
+    @course_type.destroy || render_error(@course_type, :unprocessable_entity)
   end
 
   private

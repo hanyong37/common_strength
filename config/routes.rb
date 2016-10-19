@@ -5,7 +5,7 @@ Rails.application.routes.draw do
     resources :users
     resources :settings, only: [:index, :update]
     resources :customers
-    resources :stores, only: [:index, :create, :update, :destroy]
+    resources :stores, only: [:show, :index, :create, :update, :destroy]
     resources :course_types, only: [:index, :create, :update, :destroy]
     resources :courses, only: [:index, :create, :update, :destroy]
     resources :schedules, only: [:index, :create, :update, :destroy]

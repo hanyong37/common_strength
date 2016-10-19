@@ -18,9 +18,9 @@ class Admin::StoresController < Admin::ApplicationController
     @store = Store.new(store_params)
 
     if @store.save
-      render json: @store, status: :created, location: @store
+      render json: @store, status: :created
     else
-      render json: @store.errors, status: :unprocessable_entity
+      render_error(@store, :unprocessable_entity)
     end
   end
 
@@ -29,13 +29,13 @@ class Admin::StoresController < Admin::ApplicationController
     if @store.update(store_params)
       render json: @store
     else
-      render json: @store.errors, status: :unprocessable_entity
+      render_error(@store, :unprocessable_entity)
     end
   end
 
   # DELETE /stores/1
   def destroy
-    @store.destroy
+    @store.destroy || render_error(@store, :unprocessable_entity)
   end
 
   private

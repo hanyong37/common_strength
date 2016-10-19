@@ -1,3 +1,4 @@
 class CourseType < ApplicationRecord
-  has_many :courses, foreign_key: 'type_id'
+  validates :name, presence: true, uniqueness: true
+  has_many :courses, foreign_key: 'type_id', dependent: :restrict_with_error
 end

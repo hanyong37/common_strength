@@ -27,7 +27,7 @@ API按照Restful风格设计
 
 API文档约定：
 
-- 参数类型: Post方法一般使用form-data类型传参，GET方法一般使用URL。
+- 参数类型: Post方法一般使用form-data类型传参，GET方法一般使用URI。
 - 参数说明： 没有标明类型的都是string，如果有其它类型则特殊说明。
 - 必填参数： 前面带*号
 
@@ -38,7 +38,7 @@ API文档约定：
  | API说明
 --------- | -----------
 Method | POST
-URL | http://commonstrength.com:3000/admin/sessions
+URI |  /admin/sessions
 参数类型 | form-data
 参数 | * user[full_name]: '用户名'  <br> 	* user[password]: '密码'
 
@@ -69,7 +69,7 @@ X-Api-Key: Y4b2bVBazqD24WURPwJcHmh4IDkTsVdOrNwZJTM2AMB5p+wrqdQJJFtYOlQX5ALvOkDux
  | API说明
 --------- | -----------
 Method | DELETE
-URL | http://commonstrength.com:3000/admin/sessions
+URI | /admin/sessions
 参数类型 | 无
 参数 | 无
 
@@ -81,7 +81,7 @@ URL | http://commonstrength.com:3000/admin/sessions
  | API说明
 --------- | -----------
 Method | GET
-URL | http://commonstrength.com:3000/admin/customers
+URI |  /admin/customers
 参数类型 | 无
 参数 | 无
 消息 | 无
@@ -130,8 +130,8 @@ URL | http://commonstrength.com:3000/admin/customers
  | API说明
 --------- | -----------
 Method | GET
-URL | http://commonstrength.com:3000/admin/customers/:id
-参数类型 | URL
+URI |  /admin/customers/:id
+参数类型 | URI
 参数 | :id
 消息 | 404: 没有找到该客户
 
@@ -162,7 +162,7 @@ URL | http://commonstrength.com:3000/admin/customers/:id
  | API说明
 --------- | -----------
 |  Method| POST
-|  URL| http://commonstrength.com:3000/admin/customers/
+|  URI|  /admin/customers/
 |  参数类型| form-data
 | 参数| * customer[name] <br> * customer[mobile] <br> * customer[weixin] <br>
 消息：| 201：成功 <br> 400: 参数错误（没有包含customer参数）<br> 422: 验证没通过
@@ -218,8 +218,8 @@ URL | http://commonstrength.com:3000/admin/customers/:id
  | API说明
 --------- | -----------
 |  Method| DELETE
-|  URL| http://commonstrength.com:3000/admin/customers/[id]
-|  参数类型| URL
+|  URI|  /admin/customers/[id]
+|  参数类型| URI
 | 参数| * id
 消息：| 204: 删除成功 <br> 404: 未找到资源 <br> 422: 验证没通过
 
@@ -246,8 +246,8 @@ URL | http://commonstrength.com:3000/admin/customers/:id
 
  | API说明
 --------- | -----------
-|  Method| PATCH
-|  URL| http://commonstrength.com:3000/admin/customers/[id]
+|  Method|  PUT
+|  URI|  /admin/customers/[id]
 |  参数类型| form-data
 | 参数| customer[name] <br> customer[mobile] <br> customer[weixin] <br> --以上参数至少传一个。
 消息：| 200: 更新成功 <br> 404:未找到资源 <br> 422: 验证没通过
@@ -273,9 +273,146 @@ URL | http://commonstrength.com:3000/admin/customers/:id
 
 ```
 
+
 # 后台用户 - user
 # 系统设置 - setting
 # 门店 - store
+# 课程类型 - course_type
+## 课程类型 - 获取列表
+ | API说明
+--------- | -----------
+|  Method| GET
+|  URI|  /admin/course_types
+|  参数类型| n/a
+| 参数| n/a
+消息：| 200: 更新成功 
+
+```json
+{
+  "data": [
+    {
+      "id": "1",
+      "type": "course-types",
+      "attributes": {
+        "name": "基础课程",
+        "description": null
+      },
+      "relationships": {
+        "courses": {
+          "data": [
+            {
+              "id": "1",
+              "type": "courses"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "2",
+      "type": "course-types",
+      "attributes": {
+        "name": "进阶课程",
+        "description": null
+      },
+      "relationships": {
+        "courses": {
+          "data": []
+        }
+      }
+    }
+  ]
+}
+```
+
+
+## 课程类型 - 新增
+
+ | API说明
+--------- | -----------
+|  Method| POST
+|  URI|  /admin/course_types
+|  参数类型| form-data
+| 参数| course_type[name]: 不能重复, 不能为空 <br> course_type[description]
+| 消息：| 201：成功 <br> 400: 参数错误（没有包含customer参数）<br> 422: 验证没通过
+
+> 成功创建后返回201：   
+> 验证没通过返回422:
+
+```json
+{
+  "errors": [
+    {
+      "source": {
+        "pointer": "/data/attributes/name"
+      },
+      "detail": "has already been taken"
+    }
+  ]
+}
+
+{
+  "errors": [
+    {
+      "source": {
+        "pointer": "/data/attributes/name"
+      },
+      "detail": "can't be blank"
+    }
+  ]
+}
+```
+
+## 课程类型 - 删除
+ | API说明
+--------- | -----------
+|  Method| DELETE
+|  URI|  /admin/course_types/[id]
+|  参数类型| URI
+| 参数| * id, 
+消息：| 204: 删除成功 <br> 404: 未找到资源 <br> 422: 验证没通过
+
+> 如果有关联课程，不能被删除，并会返回422：
+
+```json
+{
+  "errors": [
+    {
+      "source": {
+        "pointer": "/data/attributes/base"
+      },
+      "detail": "Cannot delete record because dependent courses exist"
+    }
+  ]
+}
+```
+
+
+## 课程类型 - 修改
+ | API说明
+--------- | -----------
+|  Method|  PUT
+|  URI|  /admin/course_types/[id]
+|  参数类型| form-data
+| 参数| course_type[name]: 不能重复, 不能为空 <br> course_type[description]--以上参数至少传一个。
+消息：| 200: 更新成功 <br> 404:未找到资源 <br> 422: 验证没通过
+> 成功后返回200，以及更新后的信息：  
+> 验证没通过消息同新增
+
+```json
+{
+  "data": {
+    "id": "6",
+    "type": "course-types",
+    "attributes": {
+      "name": "haha",
+      "description": "make you strong than ever"
+    }
+  }
+}
+```
+
+
 # 课程 - course
 # 课程表 - schedule
 # 训练 - training
