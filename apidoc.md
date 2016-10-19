@@ -277,6 +277,146 @@ URI |  /admin/customers/:id
 # 后台用户 - user
 # 系统设置 - setting
 # 门店 - store
+
+## 门店 - 获取列表
+ | API说明
+--------- | -----------
+|  Method| GET
+|  URI|  /admin/stores
+|  参数类型| n/a
+| 参数| n/a
+消息：| 200: 更新成功
+
+```json
+{
+  "data": [
+    {
+      "id": "1",
+      "type": "stores",
+      "attributes": {
+        "name": "中关村店",
+        "address": "中关村",
+        "telphone": "010-009988776"
+      }
+    },
+    {
+      "id": "2",
+      "type": "stores",
+      "attributes": {
+        "name": "大望路店",
+        "address": "大望路",
+        "telphone": "010-119988776"
+      }
+    }
+  ]
+}
+```
+
+
+## 门店 - 新增
+
+ | API说明
+--------- | -----------
+|  Method| POST
+|  URI|  /admin/stores
+|  参数类型| form-data
+| 参数| store[name]: 不能重复, 不能为空 <br> store[address] <br> store[telphone]
+| 消息：| 201：成功 <br> 400: 参数错误（没有包含customer参数）<br> 422: 验证没通过
+
+> 成功创建后返回201：
+> 验证没通过返回422:
+
+```json
+{
+  "errors": [
+    {
+      "source": {
+        "pointer": "/data/attributes/name"
+      },
+      "detail": "has already been taken"
+    }
+  ]
+}
+
+{
+  "errors": [
+    {
+      "source": {
+        "pointer": "/data/attributes/name"
+      },
+      "detail": "can't be blank"
+    }
+  ]
+}
+```
+
+## 门店 - 删除
+ | API说明
+--------- | -----------
+|  Method| DELETE
+|  URI|  /admin/stores/[id]
+|  参数类型| URI
+| 参数| * id,
+消息：| 204: 删除成功 <br> 404: 未找到资源 <br> 422: 验证没通过
+
+> 如果有关联课程, 客户，不能被删除，并会返回422：
+
+```json
+{
+  "errors": [
+    {
+      "source": {
+        "pointer": "/data/attributes/base"
+      },
+      "detail": "Cannot delete record because dependent courses exist"
+    }
+  ]
+}
+
+
+{
+  "errors": [
+    {
+      "source": {
+        "pointer": "/data/attributes/base"
+      },
+      "detail": "Cannot delete record because dependent customer exist"
+    }
+  ]
+}
+
+```
+
+
+## 门店 - 修改
+ | API说明
+--------- | -----------
+|  Method|  PUT
+|  URI|  /admin/stores/[id]
+|  参数类型| form-data
+| 参数| store[name]: 不能重复, 不能为空 <br> store[address]--以上参数至少传一个。
+消息：| 200: 更新成功 <br> 404:未找到资源 <br> 422: 验证没通过
+> 成功后返回200，以及更新后的信息：
+> 验证没通过消息同新增
+
+```json
+
+{
+  "data": {
+    "id": "5",
+    "type": "stores",
+    "attributes": {
+      "name": "haha",
+      "address": "big store address",
+      "telphone": "12312340"
+    }
+  }
+}
+
+```
+
+
+
 # 课程类型 - course_type
 ## 课程类型 - 获取列表
  | API说明
@@ -414,6 +554,7 @@ URI |  /admin/customers/:id
 
 
 # 课程 - course
+
 # 课程表 - schedule
 # 训练 - training
 # 客户权益 - membership
