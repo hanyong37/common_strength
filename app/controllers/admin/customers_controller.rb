@@ -3,8 +3,13 @@ class Admin::CustomersController < Admin::ApplicationController
 
   # GET /customers
   def index
-    @customers = Customer.all
+    #TODO: change it in safer way!!!
+    params.permit(:store_id,:qstring)
+    condition1 = "store_id = #{params[:store_id]}" if params[:store_id].present?
+    condition2 = "(weixin like '%#{params[:qstring]}%' OR mobile like '%#{params[:qstring]}%' OR name like '%#{params[:qstring]}%' )" if params[:qstring].present?
+    condition = (condition1 && condition2) ? condition1+" and "+condition2 : (condition1 || condition2)
 
+    @customers = Customer.where(condition)
     render json: @customers
   end
 

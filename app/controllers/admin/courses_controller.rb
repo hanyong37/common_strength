@@ -3,8 +3,12 @@ class Admin::CoursesController < Admin::ApplicationController
 
   # GET /courses
   def index
-    @courses = Course.all
-
+    params.permit(:store_id)
+    if params[:store_id]
+      @courses = Course.where(store_id: params[:store_id])
+    else
+      @courses = Course.all
+    end
     render json: @courses
   end
 
@@ -39,13 +43,13 @@ class Admin::CoursesController < Admin::ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_course
-      @course = Course.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_course
+    @course = Course.find(params[:id])
+  end
 
-    # Only allow a trusted parameter "white list" through.
-    def course_params
+  # Only allow a trusted parameter "white list" through.
+  def course_params
     params.require(:course).permit(:name, :type_id, :store_id, :status, :description, :default_capacity)
-    end
+  end
 end

@@ -23,12 +23,12 @@ search: true
 模块  | 后端开发 | 前端对接 | 问题
 ----|----|----|----
 1 登录 		| 完成 | 完成 |
-2 会员客户 	| 修改 | 进行中 | TODO：<br>1.需要加分页，<br> 2.增加搜索，名称，电话，微信；<br> 3. index接受门店参数
+2 会员客户 	| 修改 | 进行中 | TODO：<br>1.需要加分页，<br> 2.增加搜索，名称，电话，微信；[done]<br> 3. index接受门店参数[done]
 3 后台用户 	| 完成 | 未开始 | 
 4 课程规则 	| 完成 | 进行中 | 
 5 门店 		| 完成 | 完成 | 
-6 课程分类 	| 完成 | 完成 | TODO：初始化数据
-7 课程 		| 修改 | 进行中 | TODO：index接受门店参数
+6 课程分类 	| 完成 | 完成 | 
+7 课程 		| 修改 | 进行中 | TODO：index接受门店参数[done]
 8 课程表  	| 进行中 | | 
 9 训练  	| 进行中 | | 从客户进入
 10 会员操作	| 进行中 | | 从客户进入
@@ -101,9 +101,9 @@ URI | /admin/sessions
  | API说明
 --------- | -----------
 Method | GET
-URI |  /admin/customers
-参数类型 | 无
-参数 | 无
+URI |  /admin/customers[?store_id=#][&qstring=?]
+参数类型 | URL
+参数 | store_id, 为空不过滤，否则按照门店过滤; qstring, 如果不为空则搜索 name,weixin,mobile.
 消息 | 无
 
 > 返回Jason:
@@ -417,12 +417,12 @@ URI |  /admin/customers/:id
  setting[updated_at] | 更新时间| int | 不可修改 |
 
 
-设置项[:key] | 说明
-----|----
-booking_limit_days | 客户可以预定未来？的天课程
-course_view_days | 客户可以查看未来？天的课程
-cancle_limit_minutes | 课程开始前？分钟，客户可以取消预约，可以自动排队
-queue_limit_number | 允许排队的人数（所有课程有效）
+设置项[:key] | 标题 | 说明
+----|----|----
+booking_limit_days | 课程预约时间限制（天） | 客户可以预定未来？的天课程
+course_view_days | 课程浏览时间限制（天）|客户可以查看未来？天的课程
+cancle_limit_minutes | 课程冻结时间（分钟）|课程开始前？分钟，客户可以取消预约，可以自动排队
+queue_limit_number| 允许排队人数（个）| 允许排队的人数（所有课程有效）
 
 
 ```json
@@ -797,10 +797,10 @@ URI |  /admin/settings/:key
  | API说明
 --------- | -----------
 Method | GET
-URI |  /admin/courses
-参数类型 | 无
-参数 | 无
-消息 | 无
+URI |  /admin/courses[?store_id=#]
+参数类型 | URL
+参数 | store_id, 为空不过滤，否则按照门店过滤
+
 
 > 返回Jason:
 
