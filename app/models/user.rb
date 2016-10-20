@@ -3,7 +3,8 @@ class User < ApplicationRecord
   has_secure_password
 
   before_create :generate_authentication_token
-  validates :full_name, presence: true
+  validates :full_name, :password, presence: true
+  validates :full_name, uniqueness: true
 
   def generate_authentication_token
     loop do

@@ -1,5 +1,5 @@
 class Admin::UsersController < Admin::ApplicationController
-  before_action :validate_type, only: [:create, :update]
+  #before_action :validate_type, only: [:create, :update]
   before_action :set_user, only: [:show, :update, :destroy]
 
   def index
@@ -8,19 +8,39 @@ class Admin::UsersController < Admin::ApplicationController
   end
 
 
+  def destroy
+    @user.destroy || render_error(@user, :unprocessable_entity)
+  end
+
+  def create
+    @user = User.new(user_params)
+
+    if @user.save
+      render json: @user, status: :created
+    else
+      render_error(@user, :unprocessable_entity)
+    end
+  end
+
+  def update
+    if @user.update(user_params)
+      render json: @user
+    else
+      render json: @user.errors, status: :unprocessable_entity
+    end
+  end
+
   def show
     render json: @user
   end
 
   private
   def set_user
-    begin
-      @user = User.find params[:id]
-    rescue ActiveRecord::RecordNotFound
-      user = User.new
-      user.errors.add(:id, "Wrong ID provided")
-      render_error(user, 404) and return
-    end
+      @user = User.find(params[:id])|| render_error(@user, 404)
+  end
+
+  def user_params
+    params.require(:user).permit(:full_name, :password, :description)
   end
 
 end
