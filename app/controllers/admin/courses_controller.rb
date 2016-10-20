@@ -18,9 +18,9 @@ class Admin::CoursesController < Admin::ApplicationController
     @course = Course.new(course_params)
 
     if @course.save
-      render json: @course, status: :created, location: @course
+      render json: @course, status: :created
     else
-      render json: @course.errors, status: :unprocessable_entity
+      render_error(@course,:unprocessable_entity)
     end
   end
 
@@ -29,13 +29,13 @@ class Admin::CoursesController < Admin::ApplicationController
     if @course.update(course_params)
       render json: @course
     else
-      render json: @course.errors, status: :unprocessable_entity
+      render_error(@course,:unprocessable_entity)
     end
   end
 
   # DELETE /courses/1
   def destroy
-    @course.destroy
+    @course.destroy ||  render_error(@course,:unprocessable_entity)
   end
 
   private
@@ -46,6 +46,6 @@ class Admin::CoursesController < Admin::ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def course_params
-      params.fetch(:course, {})
+    params.require(:course).permit(:name, :type_id, :store_id, :status, :description, :default_capacity)
     end
 end

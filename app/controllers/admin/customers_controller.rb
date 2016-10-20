@@ -46,6 +46,6 @@ class Admin::CustomersController < Admin::ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def customer_params
-    params.require(:customer).permit(:name, :mobile, :weixin, :membership_type, :membership_duedate, :membership_remaining_times, :store_id)
+    params.require(:customer).permit(:name, :mobile, :weixin, :membership_type, :membership_duedate, :membership_remaining_times, :store_id, :is_locked)
   end
 end

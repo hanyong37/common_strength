@@ -7,7 +7,7 @@ Rails.application.routes.draw do
     resources :customers
     resources :stores, only: [:show, :index, :create, :update, :destroy]
     resources :course_types, only: [:index, :create, :update, :destroy]
-    resources :courses, only: [:index, :create, :update, :destroy]
+    resources :courses, only: [:index, :create, :update, :destroy, :show]
     resources :schedules, only: [:index, :create, :update, :destroy]
     resources :trainings
   end

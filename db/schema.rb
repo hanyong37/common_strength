@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161019074717) do
+ActiveRecord::Schema.define(version: 20161020080336) do
 
   create_table "course_types", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "name"
@@ -23,10 +23,11 @@ ActiveRecord::Schema.define(version: 20161019074717) do
     t.integer  "type_id"
     t.integer  "store_id"
     t.string   "name"
-    t.text     "description", limit: 65535
+    t.text     "description",      limit: 65535
     t.integer  "status"
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
+    t.integer  "default_capacity"
   end
 
   create_table "customers", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -39,6 +40,18 @@ ActiveRecord::Schema.define(version: 20161019074717) do
     t.integer  "membership_type"
     t.date     "membership_duedate"
     t.integer  "membership_remaining_times"
+    t.boolean  "is_locked"
+  end
+
+  create_table "schedules", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer  "course_id"
+    t.integer  "store_id"
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.integer  "capacity"
+    t.boolean  "is_published"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
   end
 
   create_table "settings", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
