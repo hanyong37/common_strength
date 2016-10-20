@@ -4,11 +4,7 @@ class Admin::CoursesController < Admin::ApplicationController
   # GET /courses
   def index
     params.permit(:store_id)
-    if params[:store_id]
-      @courses = Course.where(store_id: params[:store_id])
-    else
-      @courses = Course.all
-    end
+    @courses = Course.where(course_conditions)
     render json: @courses
   end
 
@@ -51,5 +47,10 @@ class Admin::CoursesController < Admin::ApplicationController
   # Only allow a trusted parameter "white list" through.
   def course_params
     params.require(:course).permit(:name, :type_id, :store_id, :status, :description, :default_capacity)
+  end
+
+  def course_conditions
+    condition = init_condition
+    condition = add_store_filter_condition(condition)
   end
 end
