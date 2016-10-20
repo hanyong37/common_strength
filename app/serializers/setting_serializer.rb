@@ -1,3 +1,3 @@
 class SettingSerializer < ActiveModel::Serializer
-  attributes :id, :key, :value
+  attributes :key, :value, :updated_at
 end

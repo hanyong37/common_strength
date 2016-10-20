@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   namespace :admin do
     resources :sessions, only: [:create, :destroy]
     resources :users
-    resources :settings, only: [:index, :update]
+    resources :settings, only: [:index, :update, :show]
     resources :customers
     resources :stores, only: [:show, :index, :create, :update, :destroy]
     resources :course_types, only: [:index, :create, :update, :destroy]
