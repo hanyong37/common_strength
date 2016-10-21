@@ -5,4 +5,12 @@ class Course < ApplicationRecord
   has_many :schedules, dependent: :restrict_with_error
 
   enum status:{'active':1, 'inactive':0}
+
+  def store_name
+    self.store.name
+  end
+
+  def type_name
+    self.type.name
+  end
 end

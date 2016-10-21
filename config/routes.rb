@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   #admin user resources
+  get 'admin/sessions/current_user', to: 'admin/sessions#show'
   namespace :admin do
     resources :sessions, only: [:create, :destroy]
     resources :users
