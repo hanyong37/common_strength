@@ -81,8 +81,12 @@ task :deploy => :environment do
     invoke :'deploy:cleanup'
 
     to :launch do
-      queue "mkdir -p #{deploy_to}/#{current_path}/tmp/"
-      queue "touch #{deploy_to}/#{current_path}/tmp/restart.txt"
+      #queue "mkdir -p #{deploy_to}/#{current_path}/tmp/"
+      #queue "touch #{deploy_to}/#{current_path}/tmp/restart.txt"
+
+      queue %[cd #{deploy_to}/#{current_path}]
+      queue "cat /var/www/common_strength/tmp/pids/server.pid | xargs kill -s TERM"
+      queue 'bin/rails s -d -e production'
     end
   end
 end
