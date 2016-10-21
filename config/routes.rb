@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   #admin user resources
-  get 'admin/sessions/current_user', to: 'admin/sessions#show'
+  #get 'admin/sessions/current_user', to: 'admin/sessions#show'
   namespace :admin do
     resources :sessions, only: [:create, :destroy]
     resources :users
@@ -9,7 +9,7 @@ Rails.application.routes.draw do
     resources :stores, only: [:show, :index, :create, :update, :destroy]
     resources :course_types, only: [:index, :create, :update, :destroy]
     resources :courses, only: [:index, :create, :update, :destroy, :show]
-    resources :schedules, only: [:index, :create, :update, :destroy]
+    resources :schedules, only: [:show, :index, :create, :update, :destroy]
     resources :trainings
   end
 

@@ -85,8 +85,8 @@ task :deploy => :environment do
       #queue "touch #{deploy_to}/#{current_path}/tmp/restart.txt"
 
       queue %[cd #{deploy_to}/#{current_path}]
-      queue "cat /var/www/common_strength/tmp/pids/server.pid | xargs kill -s TERM"
-      queue 'bin/rails s -d -e production'
+      queue "cat #{deploy_to}/tmp/server.pid | xargs kill -s TERM"
+      queue 'bin/rails s -d -e production --pid `pwd`/../../tmp/server.pid'
     end
   end
 end

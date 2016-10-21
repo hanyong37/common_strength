@@ -13,7 +13,7 @@ settings = Setting.create([
   {key: 'queue_limit_number', value: '7'},
 ])
 
-users = Users.create([
+users = User.create([
   {full_name: 'admin', password:'1234'}
 ])
 customers = Customer.create([
@@ -34,3 +34,15 @@ stores = Store.create([
 ])
 
 
+schedules = Schedule.create([
+  {store_id: 1, course_id: 1, start_time: DateTime.now, end_time: DateTime.now+45.minutes, capacity: 10, is_published: false },
+  {store_id: 1, course_id: 2, start_time: DateTime.now, end_time: DateTime.now+45.minutes, capacity: 10, is_published: false }
+])
+
+
+pp schedules
+pp settings
+pp users
+pp stores
+pp customers
+pp course_types
