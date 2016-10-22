@@ -5,4 +5,5 @@ class User < ApplicationRecord
   validates :full_name, presence: true
   validates :full_name, uniqueness: true
 
+  has_many :operations, dependent: :restrict_with_error
 end

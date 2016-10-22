@@ -11,6 +11,7 @@ Rails.application.routes.draw do
     resources :courses, only: [:index, :create, :update, :destroy, :show]
     resources :schedules, only: [:show, :index, :create, :update, :destroy]
     resources :trainings
+    resources :operations,only: [:destroy, :index, :show]
   end
 
   namespace :weixin do

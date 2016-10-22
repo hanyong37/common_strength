@@ -4,7 +4,7 @@ class Admin::CustomersController < Admin::ApplicationController
   # GET /customers
   def index
     params.permit(:store_id, :qstring)
-    @customers = Customer.where(customer_conditions)
+    @customers = Customer.where(set_conditions)
     render json: @customers
   end
 
@@ -26,7 +26,10 @@ class Admin::CustomersController < Admin::ApplicationController
 
   # PATCH/PUT /customers/1
   def update
+    params.permit(:operation_memo)
+    #if @customer.update(customer_params) && params[:operation_memo].presence?
     if @customer.update(customer_params)
+      create_operation(@customer)
       render json: @customer
     else
       render_error(@customer, :unprocessable_entity)
@@ -49,7 +52,7 @@ class Admin::CustomersController < Admin::ApplicationController
     params.require(:customer).permit(:name, :mobile, :weixin, :membership_type, :membership_duedate, :membership_remaining_times, :store_id, :is_locked)
   end
 
-  def customer_conditions
+  def set_conditions
 
     condition = init_condition
     condition = add_store_filter_condition(condition)
@@ -59,5 +62,14 @@ class Admin::CustomersController < Admin::ApplicationController
 
     condition = add_params_condition(condition, params[:qstring], qstring_clause, qstring_options)
 
+  end
+
+  def create_operation(customer)
+    operation = Operation.new(user_id: current_user.id,
+                              customer_id: customer.id,
+                              target: 'customer',
+                              description: "系统用户: '#{current_user.full_name}'修改了客户:'#{customer.name}', 会员类型： '#{customer.membership_type}', 会员到期时间:'#{customer.membership_duedate}', 会员卡剩余次数:'#{customer.membership_remaining_times}' ",
+                             operation_memo: params[:operation_memo])
+    operation.save!
   end
 end

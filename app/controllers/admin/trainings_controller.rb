@@ -18,7 +18,7 @@ class Admin::TrainingsController < Admin::ApplicationController
     @training = Training.new(training_params)
 
     if @training.save
-      render json: @training, status: :created, location: @training
+      render json: @training, status: :created
     else
       render json: @training.errors, status: :unprocessable_entity
     end

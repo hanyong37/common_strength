@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161020080336) do
+ActiveRecord::Schema.define(version: 20161022155302) do
 
   create_table "course_types", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "name"
@@ -41,6 +41,17 @@ ActiveRecord::Schema.define(version: 20161020080336) do
     t.date     "membership_duedate"
     t.integer  "membership_remaining_times"
     t.boolean  "is_locked"
+  end
+
+  create_table "operations", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer  "user_id"
+    t.string   "target"
+    t.string   "target_id"
+    t.string   "description"
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
+    t.text     "operation_memo", limit: 65535
+    t.integer  "customer_id"
   end
 
   create_table "schedules", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|

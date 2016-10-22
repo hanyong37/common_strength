@@ -14,6 +14,10 @@ class Admin::ApplicationController < ActionController::API
     add_params_condition(condition, params[:store_id], ' AND store_id = ? ', [params[:store_id]])
   end
 
+  def add_customer_filter_condition(condition)
+    add_params_condition(condition, params[:customer_id], ' AND customer_id = ? ', [params[:customer_id]])
+  end
+
   def add_params_condition(condition, param, clause, options)
     if param.present?
       condition[0] += " #{clause} "
@@ -42,8 +46,8 @@ class Admin::ApplicationController < ActionController::API
   def validate_user
     token = request.headers["X-Api-Key"]
     head 403 and return unless token
-    user = User.find_by token: token
-    head 403 and return unless user
+    @current_user = User.find_by token: token
+    head 403 and return unless @current_user
   end
   private
   def render_error(resource, status)

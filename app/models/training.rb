@@ -1,5 +1,6 @@
 class Training < ApplicationRecord
   belongs_to :customer
+  belongs_to :schedule
   enum booking_status:{
     no_booking: -1,
     booked: 0,
