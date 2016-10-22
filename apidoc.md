@@ -19,7 +19,7 @@ search: true
 2016-10-19	|	提交‘课程类别’，‘门店’，更新‘客户’；重装系统，解决中文问题；
 2016-10-20	|	提交‘课程规则’，’课程‘，更新’客户‘增加字段；
 2016-10-21	|	修改 客户，课程，增加按照门店过滤，按照微信，名字，手机搜索客户； 提交 用户模块；编写测试代码； 
-2016-10-22 	| 
+2016-10-22 	|  提交课程表
 
 模块  | 后端开发 | 前端对接 | 问题
 ----|----|----|----
@@ -30,7 +30,7 @@ search: true
 5 门店 		| 完成 | 完成 | 
 6 课程分类 	| 完成 | 完成 | 
 7 课程 		| 完成 | 进行中 | TODO：<br>1.index接受门店参数[done] <br> 2.增加课程分类名称，门店名称[done]
-8 课程表  	| 进行中 | | 
+8 课程表  	| 完成 | 未开始| 
 9 训练  	| 进行中 | | 从客户进入
 10 会员操作	| 进行中 | | 从客户进入
 11 微信 	|  | |
@@ -897,7 +897,151 @@ URI |  /admin/courses/:id
 > 成功后返回200，以及更新后的信息：
 
 
-# 8 课程表 - schedule
+# 8 课程表
+参数名 | 说明  | 类型| 约束 |
+----|----|----|----|----
+ schedule[store_id]   | 课程id  | int  | 必填  | store必须存在
+ schedule[store_name]   | 门店名称  | string  | 只读  |
+ schedule[course_id]  | 门店id    |int    | 必填 | course必须存在
+ schedule[course_name]   | 课程名称  | string  | 只读  |
+ schedule[start_time] | 开始时间    |datetime    | 必填 |
+ schedule[end_time]   | 结束时间 | datetime   | 必填 | 开始时间与结束时间之差不能超过8小时；
+ schedule[capacity] | 课程容量 | int | 必填 |
+ schedule[is_published] | 是否发布 | boolean |  |
+ schedule[created_at] | 创建时间 | int | 不可修改 |
+ schedule[updated_at] | 更新时间| int | 不可修改 |
+
+## 8.1 获取课程表列表
+
+ | API说明
+--------- | -----------
+Method | GET
+URI |  /admin/schedules?[store_id=1]&[by_week=2016-10-22]
+参数类型 | URL
+参数 | store_id: 按照门店获取，<br>by_week: 提供一天时间，将返回这一周的课程表，日期格式为 %y-%m-%d
+消息 | 200 404
+
+> 返回Jason:
+
+```json
+{
+    "data": [
+        {
+            "id": "3",
+            "type": "schedules",
+            "attributes": {
+                "store-id": 4,
+                "store-name": "a big store",
+                "course-id": 1,
+                "course-name": "测试课程",
+                "start-time": "2016-10-21T16:13:52.000Z",
+                "end-time": "2016-10-21T16:13:52.000Z",
+                "capacity": 101,
+                "is-published": false,
+                "updated-at": "2016-10-21T16:19:12.000Z"
+            }
+        },
+        {
+            "id": "4",
+            "type": "schedules",
+            "attributes": {
+                "store-id": 4,
+                "store-name": "a big store",
+                "course-id": 1,
+                "course-name": "测试课程",
+                "start-time": "2016-10-21T16:13:52.000Z",
+                "end-time": "2016-10-21T16:13:52.000Z",
+                "capacity": 10,
+                "is-published": false,
+                "updated-at": "2016-10-21T16:19:24.000Z"
+            }
+        },
+        {
+            "id": "5",
+            "type": "schedules",
+            "attributes": {
+                "store-id": 4,
+                "store-name": "a big store",
+                "course-id": 1,
+                "course-name": "测试课程",
+                "start-time": "2016-10-21T16:13:52.000Z",
+                "end-time": "2016-10-21T16:13:52.000Z",
+                "capacity": 10,
+                "is-published": false,
+                "updated-at": "2016-10-21T16:19:28.000Z"
+            }
+        }
+    ]
+}
+
+```
+
+## 8.2 更新课程表
+
+ | API说明
+--------- | -----------
+|  Method|  PUT
+|  URI|  /admin/schedules/[id]
+|  参数类型| form-data
+| 参数| 没有标注只读的都可以传入更新
+消息：| 200: 更新成功 <br> 404:未找到资源 <br> 422: 验证没通过
+
+## 8.3 查看课程表
+
+ | API说明
+--------- | -----------
+Method | GET
+URI |  /admin/schedules/:id
+参数类型 | URI
+参数 | :id
+消息 | 404: 没有找到该课程表
+
+
+## 8.4 创建课程表
+ | API说明
+--------- | -----------
+|  Method| POST
+|  URI|  /admin/schedules/
+|  参数类型| form-data
+| 参数| 见<参数表>
+
+消息：| 201：成功 <br> 400: 参数错误（没有包含schedule参数）<br> 422: 验证没通过
+
+> 成功创建后返回201 和新数据json：
+
+> 未通过验证的返回422：
+>> "pointer": "/data/attributes/foo" ：字段名称为foo
+> "detail": "can't be blank" =>  不能为空
+> "detail": "has already been taken"  => 不能重复
+> "detail": "must exist" => 关联数据必须存在
+
+## 8.5 删除课程表
+
+ | API说明
+--------- | -----------
+|  Method| DELETE
+|  URI|  /admin/schedules/[id]
+|  参数类型| URI
+| 参数| * id
+消息：| 204: 删除成功 <br> 404: 未找到资源 <br> 422: 验证没通过
+
+> 如果schedule有关联的trainings，会返回422, 并告知错误如下：
+
+```json
+{
+  "errors": [
+    {
+      "source": {
+        "pointer": "/data/attributes/base"
+      },
+      "detail": "Cannot delete record because dependent trainings exist"
+    }
+  ]
+}
+
+```
+
+
 # 9 训练 - training
 # 10 会员操作 - operation
 # 11 微信接口
