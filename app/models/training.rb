@@ -15,4 +15,33 @@ class Training < ApplicationRecord
     be_late: 2,
     complete: 3
   }
+
+  def customer_name
+    self.customer.name
+  end
+
+  def start_time
+    self.schedule.start_time
+  end
+
+  def end_time
+    self.schedule.end_time
+  end
+
+  def course_id
+    self.schedule.course_id
+  end
+
+  def course_name
+    self.schedule.course_name
+  end
+
+  def store_name
+    self.schedule.store_name
+  end
+
+  def store_id
+    self.schedule.store_id
+  end
+
 end

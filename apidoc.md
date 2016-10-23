@@ -43,19 +43,20 @@ author: Chen Xi
 2016-10-20	|	提交‘[课程规则](#4)’，’[课程](#7)‘，更新’客户‘增加字段；
 2016-10-21	|	修改 客户，课程，增加按照门店过滤，按照微信，名字，手机搜索客户； 提交 [用户](#3)模块；编写测试代码； 
 2016-10-22 	|  提交”[课程表](#8)‘，
-2016-10-23 | 提交”[会员操作](#9)“；修改相关”客户“接口；
+2016-10-23 | 提交”[会员操作](#10)“；提交”[训练](#9)“；
+2016-10-24 | 
 
 模块  | 后端开发 | 前端对接 | 问题
 ----|----|----|----
 1 登录 		| 完成 | 完成 | 😊
-2 会员客户 	| 修改 | 进行中 | TODO：<br>1.需要加分页，<br> 2.增加搜索，名称，电话，微信；[done]<br> 3. index接受门店参数[done]<br> 4. 增加门店名称[done]
-3 后台用户 	| 完成 | 进行中 | 😊
+2 会员客户 	| 修改 | 完成 | TODO：<br>1.需要加分页
+3 后台用户 	| 完成 | 对接中 | 
 4 课程规则 	| 完成 | 完成 | 😊
 5 门店 		| 完成 | 完成 | 😊
 6 课程分类 	| 完成 | 完成 | 😊
-7 课程 		| 完成 | 进行中 | TODO：<br>1.index接受门店参数[done] <br> 2.增加课程分类名称，门店名称[done]
-8 课程表  	| 完成 | | 
-9 训练  	| 开发中 | | 
+7 课程 		| 完成 | 完成 | 😊 TODO：增加复制一周的功能
+8 课程表  	| 完成 | 对接中| 
+9 训练  	| 完成 | | 
 10 会员操作	| 完成 | | 
 11 微信 	|  | |
 12 报表 	|  | |
@@ -1069,6 +1070,160 @@ URI |  /admin/schedules/:id
 
 <p id="9"/>
 # 9 训练 - training
+# 9 训练
+参数名 | 说明  | 类型| 约束 |
+----|----|----|----|----
+ training[schedule_id]  | 课程表id    |int    | 必填 |schedule必须存在
+ training[customer_id]  | 客户id    |int    | 必填 | customer必须存在
+ training[booking_status]   | 预定状态 | enum   | 必填 | no_booking:未预定，由管理员直接创建；<br> booked: 已预定；<br>waiting: 排队中；<br> waiting_confirmed: <br> cancelled: 取消预定
+ training[training_status]   | 训练状态 | enum   | 必填 | not_start: 未开始, <br> absence: 缺席,<br> be_late: 迟到, <br> complete: 完成训练
+ training[customer_name]   | 客户名称  | string  | 只读  | 来自cusrtomer
+ training[start_time] | 开始时间    |datetime    | 只读 | 来自schedule
+ training[end_time]   | 结束时间 | datetime   | 只读| 来自schedule
+ training[store_id]   | 门店id  | int  | 必填  | 来自schedule
+ training[store_name]   | 门店名称  | string  | 只读  | 来自schedule
+ training[course_id]  | 课程id    |int    | 只读 | 来自schedule
+ training[course_name]   | 课程名称  | string  | 只读  |来自schedule
+ training[created_at] | 创建时间 | int | 自动修改 |
+ training[updated_at] | 更新时间| int | 自动修改 |
+
+状态说明：
+
+>1. 客户预约  
+> 1.1. 如果容量未满： booking_status: booked ; training_status: not_start;  
+> 1.2. 如果容量已满： booking_status: waiting ; training_status: not_start;  
+> 1.3. 如果有人取消，或者管理员操作‘确认排队’： booking_status: booked ; training_status: not_start;
+
+>2. 客户取消预约：booking_status: cancelled ; training_status: not_start;
+
+>3. 课程结束，管理员签到  
+>  3.1 如果预约的客户完成训练：booking_status: booked ; training_status: complete;  
+>  3.2 如果预约的客户缺席训练：booking_status: booked ; training_status: absence;  
+> 3.3 如果预约的客户迟到：    booking_status: booked ; training_status: be_late;  
+> 3.4 如果由未预约的客户参加训练： booking_status: no_booking; training_status: complete;
+
+## 9.1 获取训练列表
+
+ | API说明
+--------- | -----------
+Method | GET
+URI |  /admin/trainings?[store_id=1]&[customer_id=#]
+参数类型 | URL
+参数 | store_id: 按照门店获取，<br>customer_id: 按照customer_id获取
+消息 | 200 404
+
+> 返回Jason:
+
+```json
+
+{
+    "data": [
+        {
+            "id": "1",
+            "type": "trainings",
+            "attributes": {
+                "store-id": 1,
+                "store-name": "中关村店",
+                "customer-id": 1,
+                "customer-name": "张三",
+                "schedule-id": 1,
+                "start-time": "2016-10-21T16:13:52.000Z",
+                "end-time": "2016-10-21T16:58:52.000Z",
+                "course-id": 1,
+                "course-name": "测试课程",
+                "booking-status": "waiting",
+                "training-status": "absence",
+                "created-at": "2016-10-12T19:16:30.000Z",
+                "updated-at": "2016-10-23T03:01:22.000Z"
+            },
+            "relationships": {
+                "customer": {
+                    "data": {
+                        "id": "1",
+                        "type": "customers"
+                    }
+                }
+            }
+        },
+        {
+            "id": "2",
+            "type": "trainings",
+            "attributes": {
+                "store-id": 1,
+                "store-name": "中关村店",
+                "customer-id": 1,
+                "customer-name": "张三",
+                "schedule-id": 1,
+                "start-time": "2016-10-21T16:13:52.000Z",
+                "end-time": "2016-10-21T16:58:52.000Z",
+                "course-id": 1,
+                "course-name": "测试课程",
+                "booking-status": "booked",
+                "training-status": "not_start",
+                "created-at": "2016-10-23T03:10:42.000Z",
+                "updated-at": "2016-10-23T03:10:42.000Z"
+            },
+            "relationships": {
+                "customer": {
+                    "data": {
+                        "id": "1",
+                        "type": "customers"
+                    }
+                }
+            }
+        },
+```
+
+## 9.2 更新训练
+
+ | API说明
+--------- | -----------
+|  Method|  PUT
+|  URI|  /admin/trainings/[id]
+|  参数类型| form-data
+| 参数| 没有标注只读的都可以传入更新
+消息：| 200: 更新成功 <br> 404:未找到资源 <br> 422: 验证没通过
+
+## 9.3 查看训练
+
+ | API说明
+--------- | -----------
+Method | GET
+URI |  /admin/trainings/:id
+参数类型 | URI
+参数 | :id
+消息 | 404: 没有找到该训练
+
+
+## 9.4 创建训练
+ | API说明
+--------- | -----------
+|  Method| POST
+|  URI|  /admin/trainings/
+|  参数类型| form-data
+| 参数| 见<参数表>
+
+消息：| 201：成功 <br> 400: 参数错误（没有包含training参数）<br> 422: 验证没通过
+
+> 成功创建后返回201 和新数据json：
+
+> 未通过验证的返回422：
+>> "pointer": "/data/attributes/foo" ：字段名称为foo
+> "detail": "can't be blank" =>  不能为空
+> "detail": "has already been taken"  => 不能重复
+> "detail": "must exist" => 关联数据必须存在
+
+## 9.5 删除训练
+
+ | API说明
+--------- | -----------
+|  Method| DELETE
+|  URI|  /admin/trainings/[id]
+|  参数类型| URI
+| 参数| * id
+消息：| 204: 删除成功 <br> 404: 未找到资源 <br> 422: 验证没通过
+
+> 如果training有关联的trainings，会返回422, 并告知错误如下：
 
 <p id="10"/>
 # 10 操作记录 - operation
