@@ -38,15 +38,15 @@ class Admin::ApplicationController < ActionController::API
 
   def add_params_condition(condition, param, clause, options)
     if param.present?
-      condition[0] = " #{clause} "
-      condition = options
+      condition[0] += " #{clause} "
+      condition += options
     end
     return condition
   end
 
   def check_header
     if ['POST','PUT','PATCH'].include? request.method
-      if request.content_type != "application/vnd.apijson"
+      if request.content_type != "application/vnd.api+json"
         head 406 and return
       end
     end
