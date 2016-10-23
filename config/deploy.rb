@@ -12,7 +12,7 @@ require 'mina/rvm'    # for rvm support. (http://rvm.io)
 set :term_mode, :nil
 set :domain, '123.207.151.199'
 set :deploy_to, '/var/www/common_strength/api'
-set :repository, 'https://github.com/hanyong37/common_strength.git'
+set :repository, 'git://github.com/hanyong37/common_strength.git'
 set :branch, 'master'
 
 # For system-wide RVM install.

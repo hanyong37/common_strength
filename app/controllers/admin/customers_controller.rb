@@ -4,8 +4,8 @@ class Admin::CustomersController < Admin::ApplicationController
   # GET /customers
   def index
     params.permit(:store_id, :qstring)
-    @customers = Customer.where(set_conditions)
-    render json: @customers
+    @customers = paginate(Customer.where(set_conditions))
+    render json: @customers, meta: paginate_meta(@customers)
   end
 
   # GET /customers/1

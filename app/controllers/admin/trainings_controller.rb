@@ -3,8 +3,8 @@ class Admin::TrainingsController < Admin::ApplicationController
 
   # GET /trainings
   def index
-    @trainings = Training.joins(:schedule).where(set_conditions)
-    render json: @trainings
+    @trainings = paginate(Training.joins(:schedule).where(set_conditions))
+    render json: @trainings , meta: paginate_meta(@trainings)
   end
 
   # GET /trainings/1

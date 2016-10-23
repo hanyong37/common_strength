@@ -43,18 +43,18 @@ author: Chen Xi
 2016-10-20	|	提交‘[课程规则](#4)’，’[课程](#7)‘，更新’客户‘增加字段；
 2016-10-21	|	修改 客户，课程，增加按照门店过滤，按照微信，名字，手机搜索客户； 提交 [用户](#3)模块；编写测试代码； 
 2016-10-22 	|  提交”[课程表](#8)‘，
-2016-10-23 | 提交”[会员操作](#10)“；提交”[训练](#9)“；
+2016-10-23 | 提交”[会员操作](#10)“；提交”[训练](#9)“；提交 客户，训练的分页； 
 2016-10-24 | 
 
 模块  | 后端开发 | 前端对接 | 问题
 ----|----|----|----
-1 登录 		| 完成 | 完成 | 😊
-2 会员客户 	| 修改 | 完成 | TODO：<br>1.需要加分页
-3 后台用户 	| 完成 | 对接中 | 
-4 课程规则 	| 完成 | 完成 | 😊
-5 门店 		| 完成 | 完成 | 😊
-6 课程分类 	| 完成 | 完成 | 😊
-7 课程 		| 完成 | 完成 | 😊 TODO：增加复制一周的功能
+1 登录 		| 完成 | 完成 | 😄
+2 会员客户 	| 修改 | 完成 | TODO：<br>1.需要加分页[done]
+3 后台用户 	| 完成 | 完成 | 😄
+4 课程规则 	| 完成 | 完成 | 😄
+5 门店 		| 完成 | 完成 | 😄
+6 课程分类 	| 完成 | 完成 | 😄
+7 课程 		| 完成 | 完成 | 😄 TODO：增加复制一周的功能
 8 课程表  	| 完成 | 对接中| 
 9 训练  	| 完成 | | 
 10 会员操作	| 完成 | | 
@@ -64,17 +64,69 @@ author: Chen Xi
 
 
 <p id="0"/>
-# 0. 概述
+# 0. API概述
+
+## CRUD
 
 API按照Restful风格设计, 所有管理端的api放在admin/后面；所有微信端api放到weixin/后,基本都CRUD遵循下面的规范：
 
-动作 | http METHOD | URI | Form-data Params
+
+动作 | METHOD | URI | Form-data Params
 ----|----|----|----
 查询列表[index]：	|GET |http://domain.com/admin/resources|
 查询一行[show]: |	GET| http://domain.com/admin/resources/id|
 创建[create]: 	|	POST  |http://domain.com/admin/resources | 需要 如：resource[attributes]='value'
 更新[update]: |		PUT | http://domain.com/admin/resources | 需要 如：resource[attributes]='value'
 删除[destroy]: 	|	DELET |http://domain.com/admin/resources/id|
+
+
+## 分页
+
+- 传递URL参数 
+- 参数格式：“page=2&per_page=1”，
+ - page: 第几页，
+ - per_page: 每页多少条
+ - 如果不传参数，page默认为1，per_page默认为25；
+-  目前支持分页的有 customer，training 的获取列表接口；
+-  带分页如下例子：
+	-  links：其它页的链接
+	-  meta：当前页的信息 （见下面注释）
+
+```json
+{
+    "data": [
+        {
+            "id": "2",
+            "type": "customers",
+            "attributes": {
+                "name": "李四",
+                "mobile": "18912345678",
+                "weixin": "wx234567",
+                "membership-type": "time_card",
+                "store-id": 2,
+                "membership-remaining-times": 20,
+                "membership-duedate": "2016-01-23",
+                "store-name": "大望路店",
+                "is-locked": false
+            }
+        }
+    ],
+    "links": {
+        "self": "http://localhost:3000/admin/customers?page%5Bnumber%5D=2&page%5Bsize%5D=1&per_page=1",
+        "first": "http://localhost:3000/admin/customers?page%5Bnumber%5D=1&page%5Bsize%5D=1&per_page=1",
+        "prev": "http://localhost:3000/admin/customers?page%5Bnumber%5D=1&page%5Bsize%5D=1&per_page=1",
+        "next": "http://localhost:3000/admin/customers?page%5Bnumber%5D=3&page%5Bsize%5D=1&per_page=1",
+        "last": "http://localhost:3000/admin/customers?page%5Bnumber%5D=3&page%5Bsize%5D=1&per_page=1"
+    },
+    "meta": {
+        "current-page": 2, //当前页
+        "next-page": 3,		//后面还有？页
+        "prev-page": 1,		//前面有？页
+        "total-pages": 3,	//总共有？页
+        "total-count": 3	//总共？条数据
+    }
+}
+```
 
 <p id="1"/>
 # 1. 用户登录
