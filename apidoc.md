@@ -44,18 +44,19 @@ author: Chen Xi
 2016-10-21	|	修改 客户，课程，增加按照门店过滤，按照微信，名字，手机搜索客户； 提交 [用户](#3)模块；编写测试代码； 
 2016-10-22 	|  提交”[课程表](#8)‘，
 2016-10-23 | 提交”[会员操作](#10)“；提交”[训练](#9)“；提交 客户，训练的分页； 
-2016-10-24 | 
+2016-10-24 | 课程表对接中； 开发“课程表按周操作“功能；
+2016-10-25 | 发布“课程表按周操作“
 
 模块  | 后端开发 | 前端对接 | 问题
 ----|----|----|----
 1 登录 		| 完成 | 完成 | 😄
-2 会员客户 	| 修改 | 完成 | TODO：<br>1.需要加分页[done]
+2 会员客户 	| 修改 | 完成 | 😄 
 3 后台用户 	| 完成 | 完成 | 😄
 4 课程规则 	| 完成 | 完成 | 😄
 5 门店 		| 完成 | 完成 | 😄
 6 课程分类 	| 完成 | 完成 | 😄
-7 课程 		| 完成 | 完成 | 😄 TODO：增加复制一周的功能
-8 课程表  	| 完成 | 对接中| 
+7 课程 		| 完成 | 完成 |  😄
+8 课程表  	| 完成 | 进行中 | TODO：增加复制一周的功能【DONE】
 9 训练  	| 完成 | | 
 10 会员操作	| 完成 | | 
 11 微信 	|  | |
@@ -1119,6 +1120,132 @@ URI |  /admin/schedules/:id
 }
 
 ```
+
+## 8.6 按周查看课程表
+ | API说明
+--------- | -----------
+|  Method| GET
+|  URI|  /admin/stores/[store_id]/schedules_by_week/[id]
+|  参数类型| URI
+| 参数| [store_id]: 门店id，必填； <br>[id]: 格式为 %y-%m-%d, 输入任意日期，返回这周的课程表；
+消息：| 200: 如果没有则数据为空
+
+## 8.7 按周复制课程表
+ | API说明
+--------- | -----------
+|  Method| POST
+|  URI|  /admin/stores/[store_id]/schedules_by_week
+|  参数类型| form-date
+| 参数| from_week: 复制数据来源 <br> to_week: 复制目标，<br>格式都为 %y-%m-%d
+消息：| 200, 422, 409, 403
+
+> 返回 200: 如果复制成功，则返回所有新创建的课程表数据； （json略）
+
+> 返回 422: 如果参数错误：
+
+```json
+
+{
+	"errors": [
+        {
+            "source": {
+                "pointer": "/data/attributes/schedules"
+            },
+            "detail": "params 'from_week' and 'to_week' must be given as as '%y-%m-%d', and shouldn't be  the same week!"
+        }
+    ]
+}
+```
+
+> 返回 409:  如果to_week已经存在至少一条课程表记录，将拒绝复制；
+
+```json
+{
+    "errors": [
+        {
+            "source": {
+                "pointer": "/data/attributes/schedules"
+            },
+            "detail": "target week already have schedules, please delete them all and try again!!"
+        }
+    ]
+}
+```
+
+> 返回 403: 如果from_week 没有数据：
+
+```json
+{
+    "errors": [
+        {
+            "source": {
+                "pointer": "/data/attributes/schedules"
+            },
+            "detail": "Can't find any schedules in from_week!!"
+        }
+    ]
+}
+
+``` 
+
+
+
+## 8.8 按周删除课程表
+ | API说明
+--------- | -----------
+|  Method| DELETE
+|  URI|  /admin/stores/[store_id]/schedules_by_week/[id]
+|  参数类型| URL
+| 参数| [store_id]: 门店id，必填； <br>[id]: 格式为 %y-%m-%d, 输入任意日期，返回这周的课程表；
+| 消息：| 204, 422, 409, 403
+
+> 返回 204: 如果删除成功
+
+> 返回 422: 如果参数错误：
+
+```json
+{
+    "errors": [
+        {
+            "source": {
+                "pointer": "/data/attributes/schedules"
+            },
+            "detail": "id must be given as %y-%m-%d!!"
+        }
+    ]
+}
+
+```
+
+> 返回 409:  如果to_week已经存在至少一条课程表记录，将拒绝复制；
+
+```json
+{
+    "errors": [
+        {
+            "source": {
+                "pointer": "/data/attributes/schedules"
+            },
+            "detail": "some schedules of this week have already created trainings, can't be deleted!!"
+        }
+    ]
+}
+```
+
+> 返回 403: 如果from_week 没有数据：
+
+```json
+{
+    "errors": [
+        {
+            "source": {
+                "pointer": "/data/attributes/schedules"
+            },
+            "detail": "Can't find any schedules in the giving week, nothing can be delete!"
+        }
+    ]
+}
+``` 
 
 <p id="9"/>
 # 9 训练 - training
