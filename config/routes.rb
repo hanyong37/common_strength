@@ -11,6 +11,7 @@ Rails.application.routes.draw do
 
     resources :customers do
         resources :operations,only: [:index, :show]
+        resources :trainings, only:[:index, :show]
     end
 
     resources :users do
