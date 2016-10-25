@@ -54,6 +54,7 @@ class Admin::OperationsController < Admin::ApplicationController
 
     condition = init_condition
     condition = add_customer_filter_condition(condition)
+    condition = add_user_filter_condition(condition)
 
   end
 end

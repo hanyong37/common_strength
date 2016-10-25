@@ -36,6 +36,10 @@ class Admin::ApplicationController < ActionController::API
     add_params_condition(condition, params[:customer_id], ' AND customer_id = ? ', [params[:customer_id]])
   end
 
+  def add_user_filter_condition(condition)
+    add_params_condition(condition, params[:user_id], ' AND user_id = ? ', [params[:user_id]])
+  end
+
   def add_params_condition(condition, param, clause, options)
     if param.present?
       condition[0] += " #{clause} "
@@ -76,5 +80,4 @@ class Admin::ApplicationController < ActionController::API
   def api_error(opts = {})
     render head: :unauthorized, status: opts[:status]
   end
-
 end

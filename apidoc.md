@@ -1247,6 +1247,26 @@ URI |  /admin/schedules/:id
 }
 ``` 
 
+## 8.9 发布一周课程表
+ | API说明
+--------- | -----------
+|  Method| POST
+|  URI|  /admin/stores/[store_id]/schedules_by_week/[id]/publish_all
+|  参数类型| URL
+| 参数| [store_id]: 门店id，必填； <br>[id]: 格式为 %y-%m-%d, 输入任意日期，进入这周的课程表；
+| 消息：| 204:成功， 422:参数错误, , 403: 没有找到
+
+
+## 8.10 取消发布一周课程表
+ | API说明
+--------- | -----------
+|  Method| POST
+|  URI|  /admin/stores/[store_id]/schedules_by_week/[id]/unpublish_all
+|  参数类型| URL
+| 参数| [store_id]: 门店id，必填； <br>[id]: 格式为 %y-%m-%d, 输入任意日期，进入这周的课程表；
+| 消息：| 204:成功， 422:参数错误, 403: 没有找到， 409: 如果课程表已经关联了training，则不允许取消发布；
+
+
 <p id="9"/>
 # 9 训练 - training
 # 9 训练
@@ -1421,9 +1441,9 @@ URI |  /admin/trainings/:id
  | API说明
 --------- | -----------
 Method | GET
-URI |  /admin/operations?[customer_id=#]
+URI |  /admin/customers/[:customer_id]/operations <br>或：/admin/users/[:users_id]/operations
 参数类型 | URL
-参数 | customer_id: 按客户id获取操作记录列表
+参数 | customer_id， user_id
 消息 | 200 404
 
 > 返回Jason:
