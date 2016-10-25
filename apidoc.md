@@ -1172,7 +1172,7 @@ URI |  /admin/schedules/:id
 }
 ```
 
-> 返回 403: 如果from_week 没有数据：
+> 返回 404: 如果from_week 没有数据：
 
 ```json
 {
@@ -1197,7 +1197,7 @@ URI |  /admin/schedules/:id
 |  URI|  /admin/stores/[store_id]/schedules_by_week/[id]
 |  参数类型| URL
 | 参数| [store_id]: 门店id，必填； <br>[id]: 格式为 %y-%m-%d, 输入任意日期，返回这周的课程表；
-| 消息：| 204, 422, 409, 403
+| 消息：| 204, 422, 409, 404
 
 > 返回 204: 如果删除成功
 
@@ -1232,7 +1232,7 @@ URI |  /admin/schedules/:id
 }
 ```
 
-> 返回 403: 如果from_week 没有数据：
+> 返回 404: 如果from_week 没有数据：
 
 ```json
 {

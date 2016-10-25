@@ -65,7 +65,7 @@ class Admin::SchedulesByWeekController <  Admin::ApplicationController
 
   def do_copy(from_week, to_week)
     gap =  to_week - from_week
-    from_list = Schedule.where(set_conditions(:from_date))
+    from_list = Schedule.where(set_conditions(:from_week))
     new_list = []
     from_list.each do |scd|
       new_scd = scd.dup
@@ -104,5 +104,6 @@ class Admin::SchedulesByWeekController <  Admin::ApplicationController
       qstring_options = [ begin_date,end_date ]
       condition = add_params_condition(condition, params[param_symbol], qstring_clause, qstring_options)
     end
+    condition
   end
 end
