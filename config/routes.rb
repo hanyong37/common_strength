@@ -8,6 +8,7 @@ Rails.application.routes.draw do
     resources :courses, only: [:index, :create, :update, :destroy, :show]
     resources :schedules, only: [:show, :index, :create, :update, :destroy]
     resources :trainings, only:[:index, :create, :update, :show, :destroy]
+    resources :operations,only: [:index, :show]
 
     resources :customers do
         resources :operations,only: [:index, :show]
