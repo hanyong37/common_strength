@@ -46,6 +46,8 @@ author: Chen Xi
 2016-10-23 | 提交”[会员操作](#10)“；提交”[训练](#9)“；提交 客户，训练的分页； 
 2016-10-24 | 课程表对接中； 开发“课程表按周操作“功能；
 2016-10-25 | 发布“课程表[按周操作](#8.8),查询，复制，删除“；“批量发布，取消发布课程表”
+2016-10-26 | 修改批量操作bug；确认微信认证流程；写后端自动测试代码50%；
+2016-10-27 |
 
 模块  | 后端开发 | 前端对接 | 问题
 ----|----|----|----
@@ -56,13 +58,15 @@ author: Chen Xi
 5 门店 		| 完成 | 完成 | 😄
 6 课程分类 	| 完成 | 完成 | 😄
 7 课程 		| 完成 | 完成 |  😄
-8 课程表  	| 完成 | 进行中 | TODO：增加复制一周的功能【DONE】
-9 训练  	| 完成 | | 
-10 会员操作	| 完成 | | 
+8 课程表  	| 完成 | 进行中 | 😄
+9 训练  	| 完成 | 进行中| 
+10 会员操作	| 完成 | 进行中| 
 11 微信 	| 进行中 | |
 12 报表 	|  | |
 
+需要注意的变化：  
 
+1. 登录注销： session, 去掉了s；
 
 <p id="0"/>
 # 0. API概述
@@ -137,7 +141,7 @@ API按照Restful风格设计, 所有管理端的api放在admin/后面；所有�
  | API说明
 --------- | -----------
 Method | POST
-URI |  /admin/sessions
+URI |  /admin/session
 参数类型 | form-data
 参数 | * user[full_name]: '用户名'  <br> 	* user[password]: '密码'
 
@@ -168,8 +172,8 @@ X-Api-Key: Y4b2bVBazqD24WURPwJcHmh4IDkTsVdOrNwZJTM2AMB5p+wrqdQJJFtYOlQX5ALvOkDux
  | API说明
 --------- | -----------
 Method | DELETE
-URI | /admin/sessions
-参数类型 | 无
+URI | /admin/session
+参数类型 | headers:{'x-api-token': [token]}
 参数 | 无
 
 <p id="2"/>
@@ -563,7 +567,7 @@ Method | GET
 URI |  /admin/settings/:key
 参数类型 | URI
 参数 | :key
-消息 | 404: 没有找到该课程
+消息 | 404: 没有找到
 
 
 ## 4.4 更新设置

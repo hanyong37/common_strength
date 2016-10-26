@@ -71,7 +71,7 @@ class Admin::ApplicationController < ActionController::API
     @current_user = User.find_by token: token
     head 403 and return unless @current_user
   end
-  private
+
   def render_error(resource, status)
     render json: resource, status: status, adapter: :json_api,
       serializer: ActiveModel::Serializer::ErrorSerializer

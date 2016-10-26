@@ -1,35 +1,49 @@
 require 'test_helper'
-require 'json'
 
-class UsersControllerTest < ActionController::TestCase
-  # test "the truth" do
-  #   assert true
-  # end
-  test "Should get valid list of users" do
-    get '/admin/users'
-    assert_response :success
-    assert_equal response.content_type, 'application/vnd.api+json'
-    jdata = JSON.parse response.body
-    assert_equal 6, jdata['data'].length
-    assert_equal jdata['data'][0]['type'], 'users'
+class UsersControllerTest < ActionDispatch::IntegrationTest
+  setup do
+    @user = users(:user_admin)
+    @new_user = User.create(full_name: 'temp_user',
+                                    password_digest: BCrypt::Password.create('1234'),
+                                    token: SecureRandom.base58(24)
+                                    )
   end
 
-  test "Should get valid user data" do
-    user = users('user_1')
-    get :show, params: { id: user.id }
+  test "should get index" do
+    get admin_users_url, headers: auth_header, as: :json
     assert_response :success
-    jdata = JSON.parse response.body
-    assert_equal user.id.to_s, jdata['data']['id']
-    assert_equal user.full_name, jdata['data']['attributes']['full-name']
-    assert_equal user_url(user, { host: "localhost", port: 3000 }),
-                 jdata['data']['links']['self']
   end
 
-  test "Should get JSON:API error block when requesting user data with invalid ID" do
-    get :show, params: { id: "z" }
-    assert_response 404
-    jdata = JSON.parse response.body
-    assert_equal "Wrong ID provided", jdata['errors'][0]['detail']
-    assert_equal '/data/attributes/id', jdata['errors'][0]['source']['pointer']
+  test "should create user" do
+    assert_difference('User.count') do
+      post(admin_users_url,
+           params: { user: { full_name: 'temp_user_2',
+                             password: '1234',
+                             token: SecureRandom.base58(24)}
+      },
+                              headers: auth_header,
+                              as: :json)
+    end
+
+    assert_response 201
+  end
+
+  test "should show user" do
+    get admin_user_url(@user),  headers: auth_header,as: :json
+    assert_response :success
+  end
+
+  test "should update user" do
+      patch admin_user_url(@user), params: { user: { password:'2345'} }, headers: auth_header, as: :json
+
+    assert_response 200
+  end
+
+  test "should destroy user" do
+    assert_difference('User.count', -1) do
+      delete admin_user_url(@new_user), headers: auth_header , as: :json
+    end
+
+    assert_response 204
   end
 end

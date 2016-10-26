@@ -37,3 +37,4 @@ gem 'mysql2'
 gem 'bcrypt'
 gem 'mina'
 gem 'kaminari'
+gem 'simplecov', :require => false, :group => :test

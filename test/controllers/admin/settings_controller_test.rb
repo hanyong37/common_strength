@@ -2,37 +2,21 @@ require 'test_helper'
 
 class SettingsControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @setting = settings(:one)
+    @setting = settings(:booking_limit_days)
   end
 
   test "should get index" do
-    get settings_url, as: :json
+    get admin_settings_url,  headers: auth_header ,as: :json
     assert_response :success
   end
 
-  test "should create setting" do
-    assert_difference('Setting.count') do
-      post settings_url, params: { setting: {  } }, as: :json
-    end
-
-    assert_response 201
-  end
-
   test "should show setting" do
-    get setting_url(@setting), as: :json
+    get admin_setting_url('booking_limit_days'),  headers: auth_header ,as: :json
     assert_response :success
   end
 
   test "should update setting" do
-    patch setting_url(@setting), params: { setting: {  } }, as: :json
+    patch admin_setting_url('booking_limit_days'), params: { setting: { value: 10  } },  headers: auth_header ,as: :json
     assert_response 200
-  end
-
-  test "should destroy setting" do
-    assert_difference('Setting.count', -1) do
-      delete setting_url(@setting), as: :json
-    end
-
-    assert_response 204
   end
 end

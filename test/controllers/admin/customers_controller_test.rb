@@ -2,35 +2,52 @@ require 'test_helper'
 
 class CustomersControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @customer = customers(:one)
+    @customer = customers(:luochao)
+    @new_customer = Customer.create(name: 'temp',
+                                    mobile: 18912344321,
+                                    weixin: 'foo_wx',
+                                    store: stores(:one),
+                                    membership_type: 'time_card')
   end
 
   test "should get index" do
-    get customers_url, as: :json
+    get admin_customers_url, headers: auth_header, as: :json
     assert_response :success
   end
 
   test "should create customer" do
     assert_difference('Customer.count') do
-      post customers_url, params: { customer: { mobile: @customer.mobile, name: @customer.name, weixin: @customer.weixin } }, as: :json
+      post(
+        admin_customers_url,
+        params: { customer: { mobile: 15812344321,
+                              name: 'chenxi',
+                              weixin: 'chenxi_wx',
+                              store_id: stores(:one).id,
+                              membership_type: 'time_card' } },
+                              headers: auth_header,
+                              as: :json)
     end
 
     assert_response 201
   end
 
   test "should show customer" do
-    get customer_url(@customer), as: :json
+    get admin_customer_url(@customer),  headers: auth_header,as: :json
     assert_response :success
   end
 
   test "should update customer" do
-    patch customer_url(@customer), params: { customer: { mobile: @customer.mobile, name: @customer.name, weixin: @customer.weixin } }, as: :json
+
+    assert_difference('Operation.count', 1) do
+      patch admin_customer_url(@customer), params: { customer: { mobile: @customer.mobile, name: @customer.name, weixin: @customer.weixin } }, headers: auth_header, as: :json
+    end
+
     assert_response 200
   end
 
   test "should destroy customer" do
     assert_difference('Customer.count', -1) do
-      delete customer_url(@customer), as: :json
+      delete admin_customer_url(@new_customer), headers: auth_header , as: :json
     end
 
     assert_response 204

@@ -10,15 +10,13 @@ class Admin::SessionsController < Admin::ApplicationController
     end
   end
 
-  def show
-    render json: current_user
-  end
-
   def destroy
-    user = User.find(params[:id])
-    head 404 and return unless user
+    token = request.headers["X-Api-Key"]
+    head 403 and return unless token
+    user = User.find_by token: token
+    head 403 and return unless user
     user.regenerate_token
-    head 204
+    head 204 and return
   end
 
   private

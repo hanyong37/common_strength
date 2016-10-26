@@ -3,6 +3,9 @@ require 'test_helper'
 class CourseTypesControllerTest < ActionDispatch::IntegrationTest
   setup do
     @course_type = course_types(:one)
+    @new_course_type = @course_type.dup
+    @new_course_type.name = 'another course name'
+    @new_course_type.save
   end
 
   test "should get index" do
@@ -26,7 +29,7 @@ class CourseTypesControllerTest < ActionDispatch::IntegrationTest
 
   test "should destroy course_type" do
     assert_difference('CourseType.count', -1) do
-      delete admin_course_type_url(@course_type),headers: auth_header , as: :json
+      delete admin_course_type_url(@new_course_type),headers: auth_header , as: :json
     end
 
     assert_response 204

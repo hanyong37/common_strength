@@ -4,8 +4,18 @@
 # model remove the '{}' from the fixture names and add the columns immediately
 # below each fixture, per the syntax in the comments below
 #
-one: {}
-# column: value
-#
-two: {}
-# column: value
+booking_limit_days:
+  key: 'booking_limit_days'
+  value: '7'
+
+course_view_days:
+  key: 'course_view_days'
+  value: '7'
+
+cancle_limit_minutes:
+  key: 'cancle_limit_minutes'
+  value: '7'
+
+queue_limit_number:
+  key: 'queue_limit_number'
+  value: '7'

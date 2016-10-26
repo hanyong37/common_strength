@@ -1,17 +1,17 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  course_id: 1
-  store_id: 1
+  course: one
+  store: one
   start_time: 2016-10-20 15:31:17
   end_time: 2016-10-20 15:31:17
-  capacity: 1
+  capacity: 10
   is_published: false
 
 two:
-  course_id: 1
-  store_id: 1
+  course: one
+  store: one
   start_time: 2016-10-20 15:31:17
   end_time: 2016-10-20 15:31:17
-  capacity: 1
+  capacity: 20
   is_published: false

@@ -6,31 +6,31 @@ class TrainingsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get index" do
-    get trainings_url, as: :json
+    get admin_trainings_url, headers: auth_header , as: :json
     assert_response :success
   end
 
   test "should create training" do
     assert_difference('Training.count') do
-      post trainings_url, params: { training: { schedule_id: @training.schedule_id, status: @training.status, user_id: @training.user_id } }, as: :json
+      post admin_trainings_url, params: { training: { customer_id: customers(:dapeng).id, schedule_id: schedules(:one).id, booking_status: 'booked' , training_status: 'not_start'} }, headers: auth_header , as: :json
     end
 
     assert_response 201
   end
 
   test "should show training" do
-    get training_url(@training), as: :json
+    get admin_training_url(@training), headers: auth_header , as: :json
     assert_response :success
   end
 
   test "should update training" do
-    patch training_url(@training), params: { training: { schedule_id: @training.schedule_id, status: @training.status, user_id: @training.user_id } }, as: :json
+    patch admin_training_url(@training), params: { training: { booking_status: 'cancelled'} }, headers: auth_header , as: :json
     assert_response 200
   end
 
   test "should destroy training" do
     assert_difference('Training.count', -1) do
-      delete training_url(@training), as: :json
+      delete admin_training_url(@training), headers: auth_header , as: :json
     end
 
     assert_response 204

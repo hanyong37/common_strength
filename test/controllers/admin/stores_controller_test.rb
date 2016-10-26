@@ -3,34 +3,36 @@ require 'test_helper'
 class StoresControllerTest < ActionDispatch::IntegrationTest
   setup do
     @store = stores(:one)
+    @new_store = Store.create(name: 'to be deleted')
   end
 
   test "should get index" do
-    get stores_url, as: :json
+    get admin_stores_url,  headers: auth_header, as: :json
     assert_response :success
   end
 
   test "should create store" do
     assert_difference('Store.count') do
-      post stores_url, params: { store: { address: @store.address, name: @store.name, telphone: @store.telphone } }, as: :json
+      post admin_stores_url, params: { store: { address: @store.address, name: 'new sotre added in testing', telphone: @store.telphone } }, headers: auth_header, as: :json
     end
+
 
     assert_response 201
   end
 
   test "should show store" do
-    get store_url(@store), as: :json
+    get admin_store_url(@store),  headers: auth_header, as: :json
     assert_response :success
   end
 
   test "should update store" do
-    patch store_url(@store), params: { store: { address: @store.address, name: @store.name, telphone: @store.telphone } }, as: :json
+    patch admin_store_url(@store), params: { store: { address: @store.address, name: @store.name, telphone: @store.telphone } }, headers: auth_header, as: :json
     assert_response 200
   end
 
   test "should destroy store" do
     assert_difference('Store.count', -1) do
-      delete store_url(@store), as: :json
+      delete admin_store_url(@new_store),  headers: auth_header, as: :json
     end
 
     assert_response 204

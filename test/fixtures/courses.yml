@@ -4,8 +4,13 @@
 # model remove the '{}' from the fixture names and add the columns immediately
 # below each fixture, per the syntax in the comments below
 #
-one: {}
-# column: value
-#
-two: {}
+one:
+  name: course_1_s1_t1
+  store: one
+  type: one
+
+two:
+  name: course_2_s1_t2
+  store: one
+  type: two
 # column: value

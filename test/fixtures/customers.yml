@@ -1,11 +1,18 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-  mobile: MyString
-  weixin: MyString
+luochao:
+  name: luochao
+  mobile: 13912344321
+  weixin: luochao_wx
+  store: one
+  membership_type: time_card
+  membership_duedate: 2016-10-31
 
-two:
-  name: MyString
-  mobile: MyString
-  weixin: MyString
+
+dapeng:
+  name: dapeng
+  mobile: 13923455432
+  weixin: dapeng_wx
+  store: two
+  membership_type: time_card
+  membership_remaining_times: 10
