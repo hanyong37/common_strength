@@ -1,15 +1,15 @@
 class Weixin::ApplicationController < ActionController::API
   #before_action :check_header
   before_action :validate_user
-  attr_accessor :current_user
+  attr_accessor :current_customer
 
   private
 
   def validate_user
     token = request.headers["X-Api-Key"]
     head 403 and return unless token
-    user = User.find_by token: token
-    head 403 and return unless user
+    @current_customer = Customer.find_by token: token
+    head 403 and return unless @current_customer
   end
 
   def render_error(resource, status)

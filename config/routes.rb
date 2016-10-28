@@ -42,8 +42,9 @@ Rails.application.routes.draw do
 
   # 微信端接口
   namespace :weixin do
+    resource :session, only: [:create]
     resource :register, only: [:create]
-    resources :my_schedules, only: [:show] do
+    resources :my_schedules, only: [:show, :index] do
     end
 
     resources :my_trainings, only: [:index, :show, :create] do

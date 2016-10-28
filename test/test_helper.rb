@@ -17,8 +17,9 @@ class ActiveSupport::TestCase
   def auth_header
      {"x-api-key"=> User.first.token}
   end
-  def customer_auth_header
-     {"x-api-key"=> Customer.first.token}
+
+  def weixin_auth_header
+     {"x-api-key"=> customers(:luochao).token}
   end
 
 

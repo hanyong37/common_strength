@@ -13,7 +13,7 @@ luochao:
 dapeng:
   name: dapeng
   mobile: 13923455432
-  weixin: dapeng_wx
+  weixin:
   token: <%=SecureRandom.base58(24) %>
   store: two
   membership_type: time_card

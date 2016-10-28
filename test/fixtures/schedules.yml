@@ -6,7 +6,7 @@ one:
   start_time: 2016-10-20 15:31:17
   end_time: 2016-10-20 15:31:17
   capacity: 10
-  is_published: false
+  is_published: true
 
 two:
   course: two
