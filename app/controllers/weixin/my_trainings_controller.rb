@@ -1,2 +1,2 @@
-class Weixin::MyTrainingsController < ApplicationController
+class Weixin::MyTrainingsController < Weixin::ApplicationController
 end

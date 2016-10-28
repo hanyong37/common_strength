@@ -17,7 +17,7 @@ class Admin::PublishesControllerTest < ActionDispatch::IntegrationTest
     post '/admin/stores/'+@store_one_id+'/schedules_by_week/2016-10*22/publish_all',  headers: auth_header
     assert_response :unprocessable_entity
 
-    assert_difference('Schedule.where(is_published: true).count', 2) do
+    assert_difference('Schedule.where(is_published: true).count', 1) do
       post '/admin/stores/'+@store_one_id+'/schedules_by_week/2016-10-20/publish_all',  headers: auth_header
     end
     assert_response :success

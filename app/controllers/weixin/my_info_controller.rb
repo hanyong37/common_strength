@@ -1,2 +1,2 @@
-class Weixin::MyInfoController < ApplicationController
+class Weixin::MyInfoController < Weixin::ApplicationController
 end
