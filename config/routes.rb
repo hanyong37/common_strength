@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   namespace :admin do
     resource :session, only: [:create, :destroy]
     resources :settings, only: [:index, :update, :show]
-    resources :course_types, only: [:index, :create, :update, :destroy]
+    resources :course_types, only: [:index, :create, :update, :destroy, :show]
     resources :courses, only: [:index, :create, :update, :destroy, :show]
     resources :schedules, only: [:show, :index, :create, :update, :destroy]
     resources :trainings, only:[:index, :create, :update, :show, :destroy]
@@ -42,8 +42,13 @@ Rails.application.routes.draw do
 
   # 微信端接口
   namespace :weixin do
-    resources :sessions, only: [:create, :destory]
-    resources :schedules, only: [:index, :destory]
+    resource :register, only: [:create]
+    resources :my_schedules, only: [:show]
+    resources :my_trainings, only: [:index, :show]
+    resources :stores, only[:index, :show] do
+      resources :daily_schedules, only[:index, :show]
+    end
+    resources :schedules, only: [:index, :d]
     resources :trainings, only: [:index, :update]
   end
 

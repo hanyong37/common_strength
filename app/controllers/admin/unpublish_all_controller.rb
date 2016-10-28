@@ -1,8 +1,9 @@
 class Admin::UnpublishAllController < Admin::PublishAllController
   def create
     return unless check_param_or_error
+    return unless find_target_list_or_error
     return unless check_unpublish_conflict
-    find_target_list_or_error || do_set_published(@target_list, false)
+    do_set_published(false)
   end
 
   private
@@ -12,7 +13,10 @@ class Admin::UnpublishAllController < Admin::PublishAllController
   end
 
   def check_unpublish_conflict
-    render_conflict_error("target schedules already have trainings, can't be unpublished.")  and return false if destroy_conflict?
+    if destroy_conflict?
+      render_conflict_error("target schedules already have trainings, can't be unpublished.")  and return false
+    end
+    return true
   end
 
 end

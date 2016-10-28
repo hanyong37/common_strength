@@ -13,6 +13,11 @@ class CourseTypesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "should get show" do
+    get admin_course_type_path(@course_type), headers: auth_header , as: :json
+    assert_response :success
+  end
+
   test "should create course_type" do
     assert_difference('CourseType.count') do
       post admin_course_types_url, params: { course_type: { description: @course_type.description, name: 'no dup name' } },headers: auth_header ,   as: :json

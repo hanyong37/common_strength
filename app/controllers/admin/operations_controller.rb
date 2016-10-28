@@ -15,25 +15,25 @@ class Admin::OperationsController < Admin::ApplicationController
     render json: @operation
   end
 
-#  # POST /operations
-#  def create
-#    @operation = Operation.new(operation_params)
-#
-#    if @operation.save
-#      render json: @operation, status: :created
-#    else
-#      render json: @operation.errors, status: :unprocessable_entity
-#    end
-#  end
+  #  # POST /operations
+  #  def create
+  #    @operation = Operation.new(operation_params)
+  #
+  #    if @operation.save
+  #      render json: @operation, status: :created
+  #    else
+  #      render json: @operation.errors, status: :unprocessable_entity
+  #    end
+  #  end
 
   # PATCH/PUT /operations/1
-#  def update
-#    if @operation.update(operation_params)
-#      render json: @operation
-#    else
-#      render json: @operation.errors, status: :unprocessable_entity
-#    end
-#  end
+  #  def update
+  #    if @operation.update(operation_params)
+  #      render json: @operation
+  #    else
+  #      render json: @operation.errors, status: :unprocessable_entity
+  #    end
+  #  end
 
   # DELETE /operations/1
   def destroy
@@ -41,15 +41,16 @@ class Admin::OperationsController < Admin::ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_operation
-      @operation = Operation.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_operation
+    @operation = Operation.find(params[:id])
+  end
 
-    # Only allow a trusted parameter "white list" through.
-    def operation_params
-      params.require(:operation).permit(:user_id, :description)
-    end
+  # Only allow a trusted parameter "white list" through.
+  #def operation_params
+  #  params.require(:operation).permit(:user_id, :description)
+  #end
+
   def set_conditions
 
     condition = init_condition

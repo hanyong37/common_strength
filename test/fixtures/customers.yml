@@ -4,6 +4,7 @@ luochao:
   name: luochao
   mobile: 13912344321
   weixin: luochao_wx
+  token: <%=SecureRandom.base58(24) %>
   store: one
   membership_type: time_card
   membership_duedate: 2016-10-31
@@ -13,6 +14,7 @@ dapeng:
   name: dapeng
   mobile: 13923455432
   weixin: dapeng_wx
+  token: <%=SecureRandom.base58(24) %>
   store: two
   membership_type: time_card
   membership_remaining_times: 10

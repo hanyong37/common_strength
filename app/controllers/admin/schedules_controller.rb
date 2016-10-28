@@ -55,13 +55,5 @@ class Admin::SchedulesController < Admin::ApplicationController
     condition = init_condition
     condition = add_store_filter_condition(condition)
 
-    if params[:by_week].present? && params_day = Date.parse(params[:by_week])
-      begin_date = Date.commercial(params_day.year, params_day.cweek, 1)
-      end_date =Date.commercial(params_day.year, params_day.cweek, 7)
-      qstring_clause = "And date(start_time) >= ? And date(start_time) <= ? "
-      qstring_options = [ begin_date,end_date ]
-      condition = add_params_condition(condition, params[:by_week], qstring_clause, qstring_options)
-    end
-
   end
 end
