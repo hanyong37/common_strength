@@ -1,6 +1,11 @@
 class Training < ApplicationRecord
   belongs_to :customer
   belongs_to :schedule
+
+  scope :valid_booking, -> {where('booking_status in (?)', %w/booked, no_booking, waiting_confirmed/ )}
+  scope :by_schedule, ->(sch_id) {where('schedule_id = ?', sch_id) if (sch_id.present?)}
+  scope :by_store, ->(str_id) {joins(:schedule).where('schedules.store_id = ?', str_id) if (str_id.present?)}
+
   enum booking_status:{
     no_booking: -1,
     booked: 0,

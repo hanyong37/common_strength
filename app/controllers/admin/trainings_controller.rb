@@ -3,7 +3,7 @@ class Admin::TrainingsController < Admin::ApplicationController
 
   # GET /trainings
   def index
-    @trainings = paginate(Training.joins(:schedule).where(set_conditions))
+    @trainings = paginate(Training.by_store(params[:store_id]).by_schedule(params[:schedule_id]))
     render json: @trainings , meta: paginate_meta(@trainings)
   end
 
@@ -48,14 +48,14 @@ class Admin::TrainingsController < Admin::ApplicationController
     params.require(:training).permit(:customer_id, :schedule_id, :booking_status, :training_status)
   end
 
-  def set_conditions
-    condition = init_condition
-    condition = add_store_filter_condition(condition)
-    #condition = add_customer_filter_condition(condition)
-    clause = ' AND (schedules.store_id = ?)'
-    options = [ params[:store_id]]
-    condition = add_params_condition(condition, params[:store_id],clause, options)
-
-  end
+#  def set_conditions
+#    condition = init_condition
+#    condition = add_store_filter_condition(condition)
+#    #condition = add_customer_filter_condition(condition)
+#    clause = ' AND (schedules.store_id = ?)'
+#    options = [ params[:store_id]]
+#    condition = add_params_condition(condition, params[:store_id],clause, options)
+#
+#  end
 
 end

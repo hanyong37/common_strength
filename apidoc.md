@@ -1312,10 +1312,10 @@ URI |  /admin/schedules/:id
  | API说明
 --------- | -----------
 Method | GET
-URI |  /admin/trainings?[store_id=1]&[customer_id=#]
+URI |  /admin/trainings?[store_id=1]&[customer_id=#]<br> 或 /admin/store/[store_id]/trainings <br>或 /admin/schedules/[schedule_id]/trainings
 参数类型 | URL
 参数 | store_id: 按照门店获取，<br>customer_id: 按照customer_id获取
-消息 | 200 404
+消息 | 200， 404
 
 > 返回Jason:
 
@@ -1562,12 +1562,156 @@ URI |  /weixin/my_schedules[/%y-%m-%d]
 }
 
 ```
+## 11.4 我的资料
 
-## 11.4 查看课程详情
-## 11.5 预约课程
-## 11.6 取消课程
-## 11.7 排队课程
-## 11.4 获取我的训练
+| API说明
+--------- | -----------
+Method | Get
+URI |  /weixin/my_info
+参数类型 | 
+参数 | 无
+消息 | 返回200，返回当前登录用户的个人信息
+
+```json
+{
+    "data": {
+        "id": "2",
+        "type": "customers",
+        "attributes": {
+            "name": "李四",
+            "mobile": "18912345678",
+            "weixin": "wx234567",
+            "membership-type": "time_card",
+            "store-id": 2,
+            "membership-remaining-times": 20,
+            "membership-duedate": "2016-01-23",
+            "store-name": "大望路店",
+            "is-locked": false,
+            "token": "xV1EcD14KizcsqUeh6dSuVvZ"
+        },
+        "relationships": {
+            "trainings": {
+                "data": [
+                    {
+                        "id": "3",
+                        "type": "trainings"
+                    },
+                    {
+                        "id": "6",
+                        "type": "trainings"
+                    }
+                 ]
+            }
+        }
+    }
+}
+```
+
+
+## 11.5 查看课程详情
+
+### 11.5.1 预约课程
+### 11.5.2 排队课程
+
+## 11.6 获取课程可操作性
+| API说明
+--------- | -----------
+Method | Get
+URI |  /weixin/schedule_operations/[schedule_id]
+参数类型 | URL
+参数 | 参数为课程表id
+消息 | 200：参数正确返回查询列表， 404:没有找到课程；
+
+> 返回某个课程表项目对于当前用户的可操作性：
+
+```json
+{
+    "data": {
+        "id": "1",
+        "type": "schedule-operations",
+        "attributes": {
+            "bookable": false,
+            "cancelable": true,
+            "waitable": false,
+            "rebookable": false
+        }
+    }
+}
+```
+
+## 11.6 获取我的训练列表
+
+| API说明
+--------- | -----------
+Method | Get
+URI |  /weixin/my_trainings/[param]
+参数类型 | URL
+参数 | 参数取值可以为：["no_booking", "booked", "waiting", "waiting_confirmed", "cancelled", "not_start", "absence", "be_late", "complete", "all"]，搜索范围是该登录用户所有的training记录。
+消息 | 200：参数正确返回查询列表， 400:参数在列表之外；
+
+```json
+{
+    "data": [
+        {
+            "id": "3",
+            "type": "trainings",
+            "attributes": {
+                "store-id": 1,
+                "store-name": "中关村店",
+                "customer-id": 2,
+                "customer-name": "李四",
+                "schedule-id": 1,
+                "start-time": "2016-10-21T16:13:52.000Z",
+                "end-time": "2016-10-21T16:58:52.000Z",
+                "course-id": 1,
+                "course-name": "测试课程",
+                "booking-status": "booked",
+                "training-status": "not_start",
+                "created-at": "2016-10-23T03:10:42.000Z",
+                "updated-at": "2016-10-23T03:10:42.000Z"
+            },
+            "relationships": {
+                "customer": {
+                    "data": {
+                        "id": "2",
+                        "type": "customers"
+                    }
+                }
+            }
+        },
+        {
+            "id": "6",
+            "type": "trainings",
+            "attributes": {
+                "store-id": 2,
+                "store-name": "大望路店",
+                "customer-id": 2,
+                "customer-name": "李四",
+                "schedule-id": 2,
+                "start-time": "2016-10-21T16:13:52.000Z",
+                "end-time": "2016-10-21T16:13:52.000Z",
+                "course-id": 1,
+                "course-name": "测试课程",
+                "booking-status": "booked",
+                "training-status": "not_start",
+                "created-at": "2016-10-23T03:10:42.000Z",
+                "updated-at": "2016-10-23T03:10:42.000Z"
+            },
+            "relationships": {
+                "customer": {
+                    "data": {
+                        "id": "2",
+                        "type": "customers"
+                    }
+                }
+            }
+        }
+    ]
+}
+```
+## 11.5 查看训练详情
+### 11.6.1 取消课程(训练)
+### 11.6.2 取消课程(训练)
 
 
 

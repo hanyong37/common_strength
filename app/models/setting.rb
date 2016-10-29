@@ -7,19 +7,19 @@ class Setting < ApplicationRecord
   }
 
   def self.booking_limit_days
-    Setting.find_by_key(:booking_limit_days).value
+    Setting.find_by_key(:booking_limit_days).value.to_i
   end
 
   def self.course_view_days
-    Setting.find_by_key(:course_view_days).value
+    Setting.find_by_key(:course_view_days).value.to_i
   end
 
   def self.cancle_limit_minutes
-    Setting.find_by_key(:cancle_limit_minutes).value
+    Setting.find_by_key(:cancle_limit_minutes).value.to_i
   end
 
   def self.queue_limit_number
-    Setting.find_by_key(:queue_limit_number).value
+    Setting.find_by_key(:queue_limit_number).value.to_i
   end
 
 end

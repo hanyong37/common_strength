@@ -6,6 +6,9 @@ Rails.application.routes.draw do
     resources :course_types, only: [:index, :create, :update, :destroy, :show]
     resources :courses, only: [:index, :create, :update, :destroy, :show]
     resources :schedules, only: [:show, :index, :create, :update, :destroy]
+    resources :schedules, only: [:show] do
+      resources :trainings, only:[:index]
+    end
     resources :trainings, only:[:index, :create, :update, :show, :destroy]
     resources :operations,only: [:index, :show]
 
@@ -44,17 +47,19 @@ Rails.application.routes.draw do
   namespace :weixin do
     resource :session, only: [:create]
     resource :register, only: [:create]
-    resources :my_schedules, only: [:show, :index] do
-    end
+    resource :my_info, only:[:show]
+    resources :my_schedules, only: [:show, :index]
+    resources :my_trainings, only: [:show]
+    resources :schedule_operations, only: [:show]
 
-    resources :my_trainings, only: [:index, :show, :create] do
+    resources :schedules, only: [:show] do
       resource :booking, only: [:create]
-      resource :cancel
+      resource :waiting, only: [:create]
+      resource :cancel, only: [:create]
+      resource :rebooking, only: [:create]
     end
-    resources :schedules, only: [:index, :d]
-    resources :trainings, only: [:index, :update]
-  end
 
+  end
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
 
