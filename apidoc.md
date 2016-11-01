@@ -49,7 +49,9 @@ author: Chen Xi
 2016-10-26 | 修改批量操作bug；确认微信认证流程；写后端自动测试代码50%；
 2016-10-27 | 写完后端测试代码并通过测试，代码覆盖率 96%；前端完成会员操作和课程表的对接；
 2016-10-28 | 完成微信接口开发，测试，文档：11.1，11.2，11.3；前端继续对接训练相关接口；
-2016-10-29 |
+2016-10-30 | 继续开发微信接口；前端发布系统到测试环境；
+2016-10-31 | 
+
 
 模块  | 后端开发 | 前端对接 | 问题
 ----|----|----|----
@@ -61,9 +63,11 @@ author: Chen Xi
 6 课程分类 	| 完成 | 完成 | 😄
 7 课程 		| 完成 | 完成 |  😄
 8 课程表  	| 完成 | 完成 | 😄
-9 训练  	| 完成 | 进行中| 有些疑问，晚上一起碰一下
+9 训练  	| 完成 | 完成| 😄
 10 会员操作	| 完成 | 完成| 😄
-11 微信 	| 进行中 | |
+11 微信-登录与验证	| 完成 | 进行中 |
+11 微信-课程预约	| 进行中 |  |
+11 微信-个人信息	| 完成| |
 12 报表 	|  | |
 
 需要注意的变化：  
@@ -1529,12 +1533,12 @@ URI |  /weixin/register
 
 
 
-## 11.3 获取我的课程表列表
+## 11.3 按天获取课程表列表
  | API说明
 --------- | -----------
 Method | Get
 URI |  /weixin/my_schedules[/%y-%m-%d]
-参数类型 | URL；
+参数类型 | URL； 注意，2016-01-01 不要写成 2016-1-1 !!!
 参数 | 日期；返回为schdeules的列表，满足几个条件：<br>1.当前用户所属store <br>2.管理员设置“课程规则”“course_view_days”日期的内；<br>3.课程 is_published = true <br>4.日期，给出日期则显示这天的课程，如果不给出，默认为当天；
 消息 | 总是返回200，如果没有符合条件的课程则结果为空；
 
@@ -1562,7 +1566,7 @@ URI |  /weixin/my_schedules[/%y-%m-%d]
 }
 
 ```
-## 11.4 我的资料
+## 11.4 我的个人资料
 
 | API说明
 --------- | -----------
@@ -1608,40 +1612,85 @@ URI |  /weixin/my_info
 ```
 
 
-## 11.5 查看课程详情
-
-### 11.5.1 预约课程
-### 11.5.2 排队课程
-
-## 11.6 获取课程可操作性
-| API说明
+## 11.5 查看一门课程详情
+ | API说明
 --------- | -----------
 Method | Get
-URI |  /weixin/schedule_operations/[schedule_id]
+URI |  /weixin/schedules/[schedule_id]
+参数类型 | URL
+参数 | 参数为课程表id，课程必须为当前用户的课程
+消息 | 200：参数正确返回schedule Json， 404:没有找到课程, 403: 用户无权限访问这个课程；
+
+
+## 11.6 获取某课程可操作性
+ | API说明
+--------- | -----------
+Method | Get
+URI |  /weixin/schedules/[schedule_id]/schedules_operations
 参数类型 | URL
 参数 | 参数为课程表id
-消息 | 200：参数正确返回查询列表， 404:没有找到课程；
+消息 | 200：参数正确返回操作性Json， 404:没有找到课程，403:用户无权访问（没有发布的课程不能访问，不在同一个门店的课程不能访问，不在可视范围内的课程不能访问）；
+
+页面显示建议：  
+
+* 如果 booking_status, 为‘not booked’, 根据情况显示“预约”或者“排队”按钮；   
+  - “bookable:true, waitable:false”: 显示“预约”按钮
+  - “bookable:false, waitable:true”: 显示“排队”按钮
+  - “bookable:false, waitable:false“: 显示提示“课程已满” （建议同时显示“已预约人数”和“课程容量”两个数字： 比如：10/8 表示8个人课程，目前有8个人报名，2个人排队，这种情况下既无法预约，也无法排队；）
+* 如果 booking_status, 为其它，则用户无法操作，只能读取信息：  
+	- ‘waiting’: "您已经排队"
+	- ‘booked’: "您已经预约"
+	- 'cancelled': "您已经取消预约"
 
 > 返回某个课程表项目对于当前用户的可操作性：
 
 ```json
 {
     "data": {
-        "id": "1",
+        "id": "4540",
         "type": "schedule-operations",
         "attributes": {
+            "schedule-id": 4540,
+            "customer-id": 2,
+            "booking-status": "booked",
             "bookable": false,
-            "cancelable": true,
-            "waitable": false,
-            "rebookable": false
+            "waitable": false
         }
     }
 }
 ```
 
-## 11.6 获取我的训练列表
+## 11.7 预约（排队）课程
+ | API说明
+--------- | -----------
+Method | POST
+URI |  /weixin/schedules/[schedule_id]/booking
+参数类型 | URL
+参数 | 参数为课程表id
+消息 | 200：参数正确返回操作性Json， 404:没有找到课程，403:用户无权访问；409: 客户已经创建了”预约“，可以到”我的预约“里去修改；
 
-| API说明
+* 预约和排队都是这个接口，后台会自动判断创建“预约”还是“排队”
+* 操作成功后会返回一个operation json, 前台可以根据这个刷新此课程的显示状态；
+
+```json
+{
+    "data": {
+        "id": "4541",
+        "type": "schedule-operations",
+        "attributes": {
+            "schedule-id": 4541,
+            "customer-id": 2,
+            "booking-status": "waiting", //如果是预约状态更新为booked；
+            "bookable": false,
+            "waitable": false
+        }
+    }
+}
+```
+
+## 11.8 获取我的训练列表
+
+ | API说明
 --------- | -----------
 Method | Get
 URI |  /weixin/my_trainings/[param]
@@ -1709,9 +1758,9 @@ URI |  /weixin/my_trainings/[param]
     ]
 }
 ```
-## 11.5 查看训练详情
-### 11.6.1 取消课程(训练)
-### 11.6.2 取消课程(训练)
+## 11.9 查看训练详情
+### 11.9.1 取消课程(训练)
+### 11.9.2 取消课程(训练)
 
 
 

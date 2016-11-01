@@ -1,4 +1,5 @@
 class Admin::UnpublishAllController < Admin::PublishAllController
+  #OPTIMIZE :change all set_conditions to scope expression;
   def create
     return unless check_param_or_error
     return unless find_target_list_or_error

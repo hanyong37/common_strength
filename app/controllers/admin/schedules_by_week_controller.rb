@@ -1,4 +1,5 @@
 class Admin::SchedulesByWeekController <  Admin::ApplicationController
+  #OPTIMIZE :change all set_conditions to scope expression;
   def show
     @schedules = Schedule.where(set_conditions(:id))
     render json: @schedules

@@ -1,13 +1,16 @@
 class Schedule < ApplicationRecord
   validates :start_time, :end_time, :capacity, presence: :true
+
   belongs_to :course
   belongs_to :store
   has_many :trainings, dependent: :restrict_with_error
+  has_many :customers, through: :trainings, dependent: :restrict_with_error
 
   scope :by_store , ->(store) {where(store_id: store) if store.present?}
   scope :by_date , ->(date) { where("date(start_time) = ?", date) if date.present?}
-  scope :viewable , -> {where("date(start_time) < ?", Date.today+Setting.course_view_days.to_i.days)}
-  scope :published, -> {where(is_published:true)}
+  scope :by_week , ->(monday_date) { where("date(start_time) >= ? and date(start_time) <= ?", monday_date, monday_date+6.days) if monday_date.present?}
+  scope :viewable , -> {where("is_published = ? and date(start_time) < ?",true, Date.today.advance(days: Setting.course_view_days.days))}
+  #scope :published, -> {where(is_published:true)}
 
   def store_name
     self.store.name
@@ -21,6 +24,14 @@ class Schedule < ApplicationRecord
     self.trainings.where.not(booking_status: :cancelled).count
   end
 
+  def bookable
+    editable  && in_capacity
+  end
+
+  def waitable
+    editable && !in_capacity && in_queue_limit_number
+  end
+
   def waiting_number
     self.trainings.waiting.count
   end
@@ -28,4 +39,26 @@ class Schedule < ApplicationRecord
   def cancelled_number
     self.trainings.cancelled.count
   end
+
+  private
+  def in_booking_limit_days
+    self.start_time.to_date <= Date.today+Setting.booking_limit_days.days
+  end
+
+  def in_cancle_limit_minutes
+    self.start_time >= DateTime.now.advance(minutes: Setting.cancle_limit_minutes)
+  end
+
+  def in_queue_limit_number
+    self.trainings.waiting.size < Setting.queue_limit_number
+  end
+
+  def in_capacity
+    self.trainings.valid_booking.count < self.capacity
+  end
+
+  def editable
+    in_booking_limit_days && in_cancle_limit_minutes
+  end
+
 end

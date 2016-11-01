@@ -48,18 +48,15 @@ Rails.application.routes.draw do
     resource :session, only: [:create]
     resource :register, only: [:create]
     resource :my_info, only:[:show]
+
     resources :my_schedules, only: [:show, :index]
+
     resources :my_trainings, only: [:show]
-    resources :schedule_operations, only: [:show]
 
     resources :schedules, only: [:show] do
-      resource :booking, only: [:create]
-      resource :waiting, only: [:create]
-      resource :cancel, only: [:create]
-      resource :rebooking, only: [:create]
+      resource :booking, only: [:create, :destroy]#TODO
+      resource :schedule_operations, only: [:show]
     end
-
   end
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
-

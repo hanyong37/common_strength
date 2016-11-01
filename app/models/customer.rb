@@ -4,6 +4,7 @@ class Customer < ApplicationRecord
 
   has_many :trainings, dependent: :restrict_with_error
   has_many :operations, dependent: :delete_all
+  has_many :schedules, through: :trainings, dependent: :restrict_with_error
   belongs_to :store
 
   has_secure_token
