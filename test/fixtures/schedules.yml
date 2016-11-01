@@ -23,3 +23,12 @@ three:
   end_time: 2016-10-10 15:31:17
   capacity: 20
   is_published: false
+
+
+four:
+  course: two
+  store: two
+  start_time: 2016-10-10 15:31:17
+  end_time: 2016-10-10 15:31:17
+  capacity: 20
+  is_published: false

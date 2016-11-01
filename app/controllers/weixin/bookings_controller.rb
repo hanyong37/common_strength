@@ -7,13 +7,15 @@ class Weixin::BookingsController < Weixin::ApplicationController
     so = ScheduleOperation.new(@schedule, @current_customer)
 
     if so.booking_status != 'not_booked'
-      head :conflict and return
+      head 200 and return
     elsif so.bookable
       create_training('booked')
       render json: ScheduleOperation.new(@schedule, @current_customer)
     elsif so.waitable
       create_training('waiting')
       render json:  ScheduleOperation.new(@schedule, @current_customer)
+    else #can't book, can't wait, means no capacity at all
+      head 409 and return
     end
   end
 
@@ -22,6 +24,5 @@ class Weixin::BookingsController < Weixin::ApplicationController
 
   def create_training(booking_status)
     @schedule.trainings.create(customer_id: @current_customer.id, booking_status: booking_status, training_status: 'not_start')
-        #FIXME internal error?
   end
 end

@@ -17,7 +17,7 @@ class ScheduleOperation
     @booking_status = 'not_booked'
 
     if schedule.trainings.exists? && !schedule.trainings.by_customer(customer.id).blank?
-      @booking_status = schedule.trainings.by_customer(customer.id).booking_status
+      @booking_status = schedule.trainings.by_customer(customer.id).first.booking_status
       @bookable = false
       @waitable = false
     end
