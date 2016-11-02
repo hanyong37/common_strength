@@ -24,14 +24,6 @@ class Schedule < ApplicationRecord
     self.trainings.where.not(booking_status: :cancelled).count
   end
 
-  def bookable
-    editable  && in_capacity
-  end
-
-  def waitable
-    editable && !in_capacity && in_queue_limit_number
-  end
-
   def waiting_number
     self.trainings.waiting.count
   end
@@ -40,13 +32,34 @@ class Schedule < ApplicationRecord
     self.trainings.cancelled.count
   end
 
+  def bookable
+    editable  && in_capacity
+  end
+
+  def waitable
+    editable && !in_capacity && in_queue_limit_number
+  end
+
+  def editable
+    in_booking_limit_days && in_cancel_limit_minutes
+  end
+
+
+  def change_queue
+    if in_cancel_limit_minutes
+      queue = self.trainings.waiting.order(:created_at)
+      queue.first.update(booking_status: 'booked') and return true unless queue.blank?
+    end
+      return false
+  end
+
   private
   def in_booking_limit_days
     self.start_time.to_date <= Date.today+Setting.booking_limit_days.days
   end
 
-  def in_cancle_limit_minutes
-    self.start_time >= DateTime.now.advance(minutes: Setting.cancle_limit_minutes)
+  def in_cancel_limit_minutes
+    DateTime.now.advance(minutes: Setting.cancel_limit_minutes) < self.start_time
   end
 
   def in_queue_limit_number
@@ -57,8 +70,5 @@ class Schedule < ApplicationRecord
     self.trainings.valid_booking.count < self.capacity
   end
 
-  def editable
-    in_booking_limit_days && in_cancle_limit_minutes
-  end
 
 end

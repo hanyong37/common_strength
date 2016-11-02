@@ -31,6 +31,38 @@ class Weixin::ScheduleOperationsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert jresponse['data']['attributes']['bookable']
     assert_not jresponse['data']['attributes']['waitable']
+
+    assert_not jresponse['data']['attributes']['is_membership_valid']
+  end
+
+  test "test customer timecard" do
+    @schedule_new.update(is_published: true)
+    customers(:luochao).update(membership_type: 'time_card' , membership_duedate: Date.today.advance(days: 10))
+
+    get '/weixin/schedules/'+@schedule_new.id.to_s+'/schedule_operations', headers: weixin_auth_header
+
+    assert_response :success
+    assert jresponse['data']['attributes']['is-membership-valid']
+  end
+
+  test "test customer measured_card" do
+    @schedule_new.update(is_published: true)
+    customers(:luochao).update(membership_type: 'measured_card' , membership_remaining_times: 0)
+
+    get '/weixin/schedules/'+@schedule_new.id.to_s+'/schedule_operations', headers: weixin_auth_header
+
+    assert_response :success
+    assert_not jresponse['data']['attributes']['is-membership-valid']
+  end
+
+  test "test customer no type" do
+    @schedule_new.update(is_published: true)
+    customers(:luochao).update(membership_type: nil)
+
+    get '/weixin/schedules/'+@schedule_new.id.to_s+'/schedule_operations', headers: weixin_auth_header
+
+    assert_response :success
+    assert_not jresponse['data']['attributes']['is-membership-valid']
   end
 
   test "waitable if in queue limit" do
@@ -52,8 +84,4 @@ class Weixin::ScheduleOperationsControllerTest < ActionDispatch::IntegrationTest
     assert_not jresponse['data']['attributes']['waitable']
   end
 
-  test "" do
-
-
-  end
 end

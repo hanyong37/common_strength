@@ -50,13 +50,14 @@ Rails.application.routes.draw do
     resource :my_info, only:[:show]
 
     resources :my_schedules, only: [:show, :index]
+    resources :schedules, only: [:show] do
+      resource :schedule_operations, only: [:show]
+      resource :booking, only: [:create, :destroy]
+    end
 
     resources :my_trainings, only: [:show]
+    resources :trainings, only: [:show, :update]
 
-    resources :schedules, only: [:show] do
-      resource :booking, only: [:create, :destroy]#TODO
-      resource :schedule_operations, only: [:show]
-    end
   end
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
