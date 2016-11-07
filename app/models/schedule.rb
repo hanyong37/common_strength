@@ -16,6 +16,14 @@ class Schedule < ApplicationRecord
     self.store.name
   end
 
+  def course_type_name
+    course.type.name
+  end
+
+  def course_description
+    course.description
+  end
+
   def course_name
     self.course.name
   end
