@@ -1,5 +1,5 @@
 class Customer < ApplicationRecord
-  validates :name, :weixin, :mobile, presence: true, uniqueness: true
+  validates :name, :mobile, presence: true, uniqueness: true
   validates :membership_type, presence: :true
 
   has_many :trainings, dependent: :restrict_with_error
