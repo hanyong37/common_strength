@@ -17,6 +17,14 @@ class Weixin::BookingsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "200 for success for measured_card" do
+    customers(:luochao).update(membership_type: 'measured_card', membership_remaining_times: 3)
+    assert_difference '@schedule_new.reload.trainings.size', 1 do
+      post '/weixin/schedules/'+@schedule_new.id.to_s+'/booking', headers: weixin_auth_header
+    end
+    assert_response :success
+  end
+
   test "200 for existing training" do
       @schedule_new.trainings.create(customer_id: customers(:luochao).id,
                                      booking_status: 'waiting',
@@ -27,6 +35,16 @@ class Weixin::BookingsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "200 and create waiting" do
+    @schedule_new.update(capacity:1)
+    Setting.queue_limit_number = 1
+    @schedule_new.trainings.create(customer_id: customers(:ningmeng).id,
+                                   booking_status: 'booked',
+                                   training_status: 'not_start')
+    post '/weixin/schedules/'+@schedule_new.id.to_s+'/booking', headers: weixin_auth_header
+    assert_response :success
+    assert jresponse['data']['attributes']['booking-status'] == 'waiting'
+  end
   test "404 for notfound" do
     post '/weixin/schedules/101001/booking', headers: weixin_auth_header
     assert_response :not_found
@@ -53,14 +71,4 @@ class Weixin::BookingsControllerTest < ActionDispatch::IntegrationTest
     assert_response :conflict
   end
 
-  test "200 and create waiting" do
-    @schedule_new.update(capacity:1)
-    Setting.queue_limit_number = 1
-    @schedule_new.trainings.create(customer_id: customers(:ningmeng).id,
-                                   booking_status: 'booked',
-                                   training_status: 'not_start')
-    post '/weixin/schedules/'+@schedule_new.id.to_s+'/booking', headers: weixin_auth_header
-    assert_response :success
-    assert jresponse['data']['attributes']['booking-status'] == 'waiting'
-  end
 end

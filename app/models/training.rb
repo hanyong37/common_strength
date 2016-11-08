@@ -95,13 +95,16 @@ class Training < ApplicationRecord
 
     @membership_times_variance = 0
 
-    old_booking_status = Training.find_by_id(self.id).booking_status
-    old_training_status = Training.find_by_id(self.id).training_status
+    #区分新增和修改
+    if self.id
+      old_booking_status = Training.find_by_id(self.id).try(:booking_status)
+      old_training_status = Training.find_by_id(self.id).try(:training_status)
 
-    @membership_times_variance = compare_booking_status(old_booking_status,self.booking_status) if self.changed.include? "booking_status"
-
-    @membership_times_variance = compare_training_status(old_training_status, self.training_status) if self.changed.include? "training_status"
-
+      @membership_times_variance = compare_booking_status(old_booking_status,self.booking_status) if self.changed.include? "booking_status"
+      @membership_times_variance = compare_training_status(old_training_status, self.training_status) if self.changed.include? "training_status"
+    else
+      @membership_times_variance = -1
+    end
   end
 
   def change_customer_membership
