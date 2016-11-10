@@ -6,7 +6,10 @@ class Training < ApplicationRecord
   belongs_to :schedule
 
   default_scope {joins(:schedule).order('start_time desc')}
-  scope :valid_booking, -> {where('booking_status in (?)', %w/booked, no_booking, waiting_confirmed/ )}
+  scope :valid_booking, -> {where('booking_status in (?)',
+                                  [Training.booking_statuses[:booked],
+                                   Training.booking_statuses[:no_booking],
+                                   Training.booking_statuses[:waiting_confirmed]] )}
   scope :by_schedule, ->(sch_id) {where('schedule_id = ?', sch_id) if (sch_id.present?)}
   scope :by_store, ->(str_id) {joins(:schedule).where('schedules.store_id = ?', str_id) if (str_id.present?)}
   scope :by_customer, ->(cst_id) {where('customer_id = ?', cst_id) if (cst_id.present?)}

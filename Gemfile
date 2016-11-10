@@ -34,6 +34,7 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'active_model_serializers'
 gem 'mysql2'
+gem 'pg'
 gem 'bcrypt'
 gem 'mina'
 gem 'kaminari'
