@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161028052312) do
+ActiveRecord::Schema.define(version: 20161111044039) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,6 +31,8 @@ ActiveRecord::Schema.define(version: 20161028052312) do
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
     t.integer  "default_capacity"
+    t.index ["store_id"], name: "index_courses_on_store_id", using: :btree
+    t.index ["type_id"], name: "index_courses_on_type_id", using: :btree
   end
 
   create_table "customers", force: :cascade do |t|
@@ -45,6 +47,7 @@ ActiveRecord::Schema.define(version: 20161028052312) do
     t.integer  "membership_remaining_times"
     t.boolean  "is_locked"
     t.string   "token"
+    t.index ["store_id"], name: "index_customers_on_store_id", using: :btree
   end
 
   create_table "operations", force: :cascade do |t|
@@ -56,6 +59,9 @@ ActiveRecord::Schema.define(version: 20161028052312) do
     t.datetime "updated_at",     null: false
     t.text     "operation_memo"
     t.integer  "customer_id"
+    t.index ["customer_id"], name: "index_operations_on_customer_id", using: :btree
+    t.index ["target_id"], name: "index_operations_on_target_id", using: :btree
+    t.index ["user_id"], name: "index_operations_on_user_id", using: :btree
   end
 
   create_table "schedules", force: :cascade do |t|
@@ -67,6 +73,8 @@ ActiveRecord::Schema.define(version: 20161028052312) do
     t.boolean  "is_published"
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
+    t.index ["course_id"], name: "index_schedules_on_course_id", using: :btree
+    t.index ["store_id"], name: "index_schedules_on_store_id", using: :btree
   end
 
   create_table "settings", force: :cascade do |t|
@@ -91,6 +99,8 @@ ActiveRecord::Schema.define(version: 20161028052312) do
     t.integer  "booking_status"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
+    t.index ["customer_id"], name: "index_trainings_on_customer_id", using: :btree
+    t.index ["schedule_id"], name: "index_trainings_on_schedule_id", using: :btree
   end
 
   create_table "users", force: :cascade do |t|
