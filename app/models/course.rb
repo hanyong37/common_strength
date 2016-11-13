@@ -5,6 +5,9 @@ class Course < ApplicationRecord
   has_many :schedules, dependent: :restrict_with_error
   has_many :trainings, through: :schedules
 
+  scope :by_store, ->(param) {where(store_id: param) if (param.present?)}
+  scope :by_status, ->(param) {where(status: Course.statuses[param]) if (param.present?)}
+
   enum status:{'active':1, 'inactive':0}
 
   def store_name

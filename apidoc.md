@@ -62,8 +62,8 @@ author: Chen Xi
 2016-11-9 | 前端对接微信训练模块，后端修改接口文档小bug
 2016-11-10 | 前端对接微信模块，后端优化数据库，加索引，从mysql更换到postgresql
 2016-11-11 | 前端发布微信测试版本，以及改过bug后的管理系统；修改一个bug，把数据优化发布到测试环境中； <br>BUG统计：未关闭：15，已关闭：16。
-2015-11-12 | 更新bug，有些问题改了但是仍然有问题,或者发布前没问题发布后出现问题；晚上跟柠檬对了一下，可能是缓存或者版本的问题，接下来柠檬会再检查一下；<br>BUG统计：未关闭：13，已关闭：20。
-2-16-11-13 | 完成报表后端开发；
+2016-11-12 | 更新bug，有些问题改了但是仍然有问题,或者发布前没问题发布后出现问题；晚上跟柠檬对了一下，可能是缓存或者版本的问题，接下来柠檬会再检查一下；<br>BUG统计：未关闭：13，已关闭：20。
+2016-11-13 | 完成报表后端开发,12.1/12.2；<br>11.6 接口加入会员锁定判断，已锁会员is_membership_valid为false;<br>7.1 修改接口，增加是否Active参数；<br>2.1 修改接口，增加过滤 是否锁定 的参数；
 
 
 模块  | 后端开发 | 前端对接 | 问题 | 测试通过
@@ -79,10 +79,10 @@ author: Chen Xi
 9 训练  	| 完成 | 完成| 😄 | 👀
 10 会员操作	| 完成 | 完成| 😄 | 👌
 11.1-3 微信-登录与验证	| 完成 | 完成| 😄  | 👌
-11.5-7 微信-课程预约	| 完成 | 完成 | 部分手机有问题？需要加上会员锁定判断；| 👀 
+11.5-7 微信-课程预约	| 完成 | 完成 | 部分手机有问题？需要加上会员锁定判断；【done】| 👀 
 11.4 微信-个人信息	| 完成| 完成 | 栏目要调整 | 👀
 11.8 微信-训练查询，修改	| 完成| 完成|  |👀
-12 报表 	| 进行中|  |
+12 报表 	| 完成 | ？ | 
 
 需要注意的变化：  
 
@@ -205,9 +205,9 @@ URI | /admin/session
  | API说明
 --------- | -----------
 Method | GET
-URI |  /admin/customers[?store_id=#][&qstring=?]
+URI | /admin/stores/1/customers?locked=true&qstring=? <br>OR /admin/customers[?store_id=#][&qstring=?]
 参数类型 | URL
-参数 | store_id, 为空不过滤，否则按照门店过滤; qstring, 如果不为空则搜索 name,weixin,mobile.
+参数 | store_id, 为空不过滤，否则按照门店过滤; <br>qstring, 如果不为空则搜索 name,weixin,mobile. <br>locked=true/false
 消息 | 无
 
 > 返回Jason:
@@ -902,9 +902,9 @@ URI |  /admin/settings/:key
  | API说明
 --------- | -----------
 Method | GET
-URI |  /admin/courses[?store_id=#]
-参数类型 | URL
-参数 | store_id, 为空不过滤，否则按照门店过滤
+URI |  /admin/stores/1/courses?status=active 或者 /admin/courses?store_id=1&status=active
+参数类型 | URL 
+参数 | store_id, 为空不过滤，否则按照门店过滤, status= active/inactive；
 
 
 > 返回Jason:

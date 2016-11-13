@@ -3,8 +3,7 @@ class Admin::CoursesController < Admin::ApplicationController
 
   # GET /courses
   def index
-    params.permit(:store_id)
-    @courses = Course.where(course_conditions)
+    @courses = Course.by_store(params[:store_id]).by_status(params[:status])
     render json: @courses
   end
 

@@ -3,8 +3,9 @@ class Admin::CustomersController < Admin::ApplicationController
 
   # GET /customers
   def index
+    # TODO: change condition to scope;
     params.permit(:store_id, :qstring)
-    @customers = paginate(Customer.where(set_conditions))
+    @customers = paginate(Customer.where(set_conditions).by_locked(to_bool(params[:locked])))
     render json: @customers, meta: paginate_meta(@customers)
   end
 
@@ -71,5 +72,11 @@ class Admin::CustomersController < Admin::ApplicationController
                               description: "系统用户: '#{current_user.full_name}'修改了客户:'#{customer.name}', 会员类型： '#{customer.membership_type}', 会员到期时间:'#{customer.membership_duedate}', 会员卡剩余次数:'#{customer.membership_remaining_times}' ",
                              operation_memo: params[:operation_memo])
     operation.save!
+  end
+
+  def to_bool(str)
+    return true if str == 'true'
+    return false if str == 'false'
+    return nil
   end
 end

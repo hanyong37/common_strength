@@ -20,13 +20,17 @@ class ScheduleOperation
     @customer_duedate = customer.membership_duedate
     @customer_remainming_times = customer.membership_remaining_times
 
-    case @customer_membership_type
-    when 'time_card'
-      @is_membership_valid = @customer_duedate >= schedule.start_time.to_date
-    when 'measured_card'
-      @is_membership_valid = @customer_remainming_times >= 1
-    else
+    if customer.is_locked
       @is_membership_valid = false
+    else
+      case @customer_membership_type
+      when 'time_card'
+        @is_membership_valid = @customer_duedate >= schedule.start_time.to_date
+      when 'measured_card'
+        @is_membership_valid = @customer_remainming_times >= 1
+      else
+        @is_membership_valid = false
+      end
     end
 
     if schedule.trainings.exists? && !schedule.trainings.by_customer(customer.id).blank?
