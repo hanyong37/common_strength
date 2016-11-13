@@ -5,7 +5,7 @@ class Training < ApplicationRecord
   belongs_to :customer
   belongs_to :schedule
 
-  default_scope {joins(:schedule).order('start_time desc')}
+  default_scope {joins(:schedule).order('schedules.start_time desc')}
   scope :valid_booking, -> {where('booking_status in (?)',
                                   [Training.booking_statuses[:booked],
                                    Training.booking_statuses[:no_booking],
@@ -13,6 +13,8 @@ class Training < ApplicationRecord
   scope :by_schedule, ->(sch_id) {where('schedule_id = ?', sch_id) if (sch_id.present?)}
   scope :by_store, ->(str_id) {joins(:schedule).where('schedules.store_id = ?', str_id) if (str_id.present?)}
   scope :by_customer, ->(cst_id) {where('customer_id = ?', cst_id) if (cst_id.present?)}
+  scope :from_date, ->(from){where('date(schedules.start_time) >= ?',from) if (from.present?)}
+  scope :to_date, ->(to){where('date(schedules.start_time) <= ?', to) if (to.present?)}
 
   enum booking_status: {
     no_booking: -1,

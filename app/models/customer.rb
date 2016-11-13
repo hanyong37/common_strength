@@ -18,4 +18,13 @@ class Customer < ApplicationRecord
     self.store.name
   end
 
+  def favorite_time_slots
+    trainings.unscoped.joins(:schedule).group('to_char(schedules.start_time, \'HH24:mm\') || \'~\' ||to_char(schedules.end_time, \'HH24:mm\')').count.sort_by{|k,v| v}.reverse.take(3).map{|e| e.join(',')}.join(' ')
+    #trainings.uniq(:course_name)
+  end
+
+  def favarite_courses
+    trainings.unscoped.joins(:schedule).group('schedules.course_id').count.sort_by{|id, count| count}.reverse.take(3).map{|e| "#{Course.find(e[0]).name}:#{e[1]}"}.join(',')
+  end
+
 end

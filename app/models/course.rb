@@ -3,6 +3,7 @@ class Course < ApplicationRecord
   belongs_to :type, class_name: 'CourseType'
   belongs_to :store
   has_many :schedules, dependent: :restrict_with_error
+  has_many :trainings, through: :schedules
 
   enum status:{'active':1, 'inactive':0}
 

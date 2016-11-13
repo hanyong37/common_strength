@@ -3,8 +3,8 @@ default: &default
   encoding: utf8
   username: chenxi
   password:
-  host: localhost
   pool: 5
+  host: localhost
 
 development:
   <<: *default

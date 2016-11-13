@@ -2,6 +2,9 @@ Rails.application.routes.draw do
   #admin user resources
   namespace :admin do
     resource :session, only: [:create, :destroy]
+    resource :customer_report, only:[:show]
+    resource :course_report, only:[:show]
+
     resources :settings, only: [:index, :update, :show]
     resources :course_types, only: [:index, :create, :update, :destroy, :show]
     resources :courses, only: [:index, :create, :update, :destroy, :show]
