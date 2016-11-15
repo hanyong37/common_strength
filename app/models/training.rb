@@ -1,9 +1,12 @@
 class Training < ApplicationRecord
 
-  before_save :check_customer_membership, if: "self.customer.measured_card?"
-  after_save :change_customer_membership, if: "self.customer.measured_card?"
+  validates_uniqueness_of :customer, scope: :schedule
+
   belongs_to :customer
   belongs_to :schedule
+
+  before_save :check_customer_membership, if: "self.customer.measured_card?"
+  after_save :change_customer_membership, if: "self.customer.measured_card?"
 
   default_scope {joins(:schedule).order('schedules.start_time desc')}
   scope :valid_booking, -> {where('booking_status in (?)',

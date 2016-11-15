@@ -65,7 +65,7 @@ author: Chen Xi
 2016-11-12 | 更新bug，有些问题改了但是仍然有问题,或者发布前没问题发布后出现问题；晚上跟柠檬对了一下，可能是缓存或者版本的问题，接下来柠檬会再检查一下；<br>BUG统计：<span style="color:red">未关闭：13，已关闭：20。</span>
 2016-11-13 | 完成报表后端开发,12.1/12.2；<br>11.6 接口加入会员锁定判断，已锁会员is_membership_valid为false;<br>7.1 修改接口，增加是否Active参数；<br>2.1 修改接口，增加过滤 是否锁定 的参数；
 2016-11-14 | 电话沟通报表接口；修改bug；<br>BUG统计：<span style="color:red">未关闭：10；已关闭：29</span>
-2015-11-15 | 测试与改bug：<br>BUG统计：<span style="color:red">未关闭:8, 已关闭：36</span>
+2015-11-15 | 修改Schedule接口；<br>测试与改bug：<br>BUG统计：<span style="color:red">未关闭:8, 已关闭：36</span>
 
 
 模块  | 后端开发 | 前端对接 | 问题 | 测试通过

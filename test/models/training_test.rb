@@ -48,4 +48,12 @@ class TrainingTest < ActiveSupport::TestCase
     assert training.rebookable
 
   end
+
+  test 'can\'t create training for same customer and same schedule' do
+    newTraining = trainings(:one).dup
+    assert_not newTraining.save
+    assert newTraining.errors.first.include? :customer
+    assert newTraining.errors.first.include? 'has already been taken'
+  end
 end
+
