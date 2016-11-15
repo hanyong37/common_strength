@@ -37,6 +37,10 @@ class Schedule < ApplicationRecord
     self.trainings.waiting.count
   end
 
+  def complete_number
+    trainings.complete.size
+  end
+
   def cancelled_number
     self.trainings.cancelled.count
   end
