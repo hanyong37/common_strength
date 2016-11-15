@@ -9,8 +9,8 @@ class Customer < ApplicationRecord
 
   has_secure_token
 
-  scope :by_store, ->(param) {where(store_id: param) if (param.present?)}
-  scope :by_locked, ->(param) {where(is_locked: param) if (param.present?)}
+  scope :by_store, ->(param) {where(store_id: param) if param.present? }
+  scope :by_locked, ->(param) {where(is_locked: param) unless param.nil? }
 
   enum membership_type: {
    time_card: 1,
