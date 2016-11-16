@@ -9,7 +9,7 @@ class Schedule < ApplicationRecord
   scope :by_store , ->(store) {where(store_id: store) if store.present?}
   scope :by_course , ->(course) {where(course_id: course) if course.present?}
   scope :by_date , ->(date) { where("date(start_time) = ?", date) if date.present?}
-  scope :by_week , ->(monday_date) { where("date(start_time) >= ? and date(start_time) <= ?", monday_date, monday_date+6.days) if monday_date.present?}
+  scope :by_week , ->(monday_date) { where("date(start_time) >= ? and date(start_time) <= ?", Date.parse(monday_date), Date.parse(monday_date)+6.days) if monday_date.present? && (begin Date.parse(monday_date); rescue ArgumentError;  false; end)}
   scope :viewable , -> {where("is_published = ? and date(start_time) < ?",true, Date.today.advance(days: Setting.course_view_days.days))}
   #scope :published, -> {where(is_published:true)}
 

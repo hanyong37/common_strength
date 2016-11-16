@@ -4,8 +4,7 @@ class Admin::SchedulesController < Admin::ApplicationController
 
   # GET /schedules
   def index
-    params.permit(:store_id, :by_week)
-    @schedules = Schedule.where(schedule_conditions)
+    @schedules = Schedule.by_store(params[:store_id]).by_course(params[:course_id]).by_week(params[:by_week])
     render json: @schedules
   end
 
@@ -50,10 +49,4 @@ class Admin::SchedulesController < Admin::ApplicationController
     params.require(:schedule).permit(:store_id, :course_id, :capacity, :is_published, :start_time, :end_time)
   end
 
-
-  def schedule_conditions
-    condition = init_condition
-    condition = add_store_filter_condition(condition)
-
-  end
 end

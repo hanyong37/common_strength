@@ -1435,7 +1435,7 @@ URI |  /admin/trainings/:id
 > 未通过验证的返回422：
 >> "pointer": "/data/attributes/foo" ：字段名称为foo
 > "detail": "can't be blank" =>  不能为空
-> "detail": "has already been taken"  => 不能重复
+> "detail": "has already been taken"  => 不能重复(同一schedule 同一个customer 只能有一条training)
 > "detail": "must exist" => 关联数据必须存在
 
 ## 9.5 删除训练
