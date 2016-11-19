@@ -25,13 +25,7 @@ class ScheduleOperation
       @booking_status = 'not_booked'
       @bookable = schedule.bookable
       @waitable = schedule.waitable
-      unless schedule.bookable || schedule.waitable
-        @schedule_reject_msg = '课程还未开放预约！' unless schedule.in_booking_limit_days
-        @schedule_reject_msg = "课程已经无法预约！" unless schedule.in_cancel_limit_minutes
-        @schedule_reject_msg = "报名人数已满，下次早点来哦！" unless schedule.in_capacity || schedule.in_queue_limit_number
-      else
-        @schedule_reject_msg = ""
-      end
+      @schedule_reject_msg = schedule.reject_msg
     end
 
     #check customer availability
@@ -40,7 +34,7 @@ class ScheduleOperation
     @customer_duedate = customer.membership_duedate
     @customer_remainming_times = customer.membership_remaining_times
 
-    @customer_reject_msg = ''
+    @customer_reject_msg = ""
 
     if customer.is_locked
       @is_membership_valid = false

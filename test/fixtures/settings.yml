@@ -6,7 +6,7 @@
 #
 booking_limit_days:
   key: 'booking_limit_days'
-  value: '7'
+  value: '2'
 
 course_view_days:
   key: 'course_view_days'
@@ -14,8 +14,12 @@ course_view_days:
 
 cancel_limit_minutes:
   key: 'cancel_limit_minutes'
-  value: '7'
+  value: '40'
 
 queue_limit_number:
   key: 'queue_limit_number'
-  value: '7'
+  value: '2'
+
+booking_limit_minutes:
+  key: 'booking_limit_minutes'
+  value: '5'

@@ -12,7 +12,7 @@ class TrainingsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create training" do
     assert_difference('Training.count') do
-      post admin_trainings_url, params: { training: { customer_id: customers(:dapeng).id, schedule_id: schedules(:one).id, booking_status: 'booked' , training_status: 'not_start'} }, headers: auth_header , as: :json
+      post admin_trainings_url, params: { training: { customer_id: customers(:dapeng).id, schedule_id: schedules(:one).id, booking_status: 'booked' , training_status: 'normal'} }, headers: auth_header , as: :json
     end
 
     assert_response 201
@@ -24,7 +24,7 @@ class TrainingsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update training" do
-    patch admin_training_url(@training), params: { training: { booking_status: 'cancelled'} }, headers: auth_header , as: :json
+    patch admin_training_url(@training), params: { training: { booking_status: 'waiting'} }, headers: auth_header , as: :json
     assert_response 200
   end
 

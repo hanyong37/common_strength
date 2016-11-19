@@ -1,5 +1,4 @@
 class Training < ApplicationRecord
-
   validates_uniqueness_of :customer, scope: :schedule
 
   belongs_to :customer
@@ -7,32 +6,45 @@ class Training < ApplicationRecord
 
   #before_save :check_customer_membership, if: "self.customer.measured_card?"
   #after_save :change_customer_membership, if: "self.customer.measured_card?"
+  after_destroy_commit :check_queue
 
-  default_scope {joins(:schedule).order('schedules.start_time desc')}
-
-  scope :valid_booking, -> {where('booking_status in (?)',
-                                  [Training.booking_statuses[:booked],
-                                   Training.booking_statuses[:no_booking],
-                                   Training.booking_statuses[:waiting_confirmed]] )}
   scope :by_schedule, ->(sch_id) {where('schedule_id = ?', sch_id) if (sch_id.present?)}
   scope :by_store, ->(str_id) {joins(:schedule).where('schedules.store_id = ?', str_id) if (str_id.present?)}
   scope :by_customer, ->(cst_id) {where('customer_id = ?', cst_id) if (cst_id.present?)}
   scope :from_date, ->(from){where("#{ START_DATE_IN_CST } >= ?",from) if (from.present?)}
   scope :to_date, ->(to){where("#{ START_DATE_IN_CST } <= ?", to) if (to.present?)}
 
+  scope :time_desc, -> {joins(:schedule).order('schedules.start_time desc')}
+  scope :time_asc, -> {joins(:schedule).order('schedules.start_time asc')}
+
+  scope :valid_booking, -> {where('booking_status in (?)',
+                                  [booking_statuses[:booked],
+                                   booking_statuses[:no_booking]])}
+
+  scope :attended, ->{where("training_status <> ?", training_statuses[:absence]) }
+
+  scope :finished, ->{joins(:schedule).where("schedules.end_time < ?", DateTime.now) }
+
+  #客户预约后为booked
+  #客户取消后删除记录
+  #客户排队后为waiting，排队成功为booked
+  #由管理员录入的为no_booking
   enum booking_status: {
     no_booking: -1,
     booked: 0,
-    waiting: 1,
-    waiting_confirmed: 2,
-    cancelled: 3
+    waiting: 1
+    #waiting_confirmed: 2,
+    #cancelled: 3
   }
 
+  #normal: 课程结束后默认为完成
+  #absence: 缺席课程
+  #be_late: 迟到
   enum training_status: {
-    not_start: 0,
+    normal: 0,
     absence: 1,
-    be_late: 2,
-    complete: 3
+    be_late: 2
+    #complete: 3
   }
 
   def customer_name
@@ -63,40 +75,52 @@ class Training < ApplicationRecord
     self.schedule.store_name
   end
 
-  def is_started
-    DateTime.now > self.start_time
+  def readable_status
+    if schedule.time_stage == 'finished'
+      return '课程已完成' if normal? && !waiting?
+      return '排队失败' if normal? && waiting?
+      return '课程迟到' if be_late?
+      return '缺席' if absence?
+      return '数据错误'
+    elsif schedule.time_stage == 'ongoing'
+      return '排队失败' if waiting?
+      return '课程进行中'
+    else #not_started
+      return '您已预约' if booked?
+      return '您已排队' if waiting?
+      return '门店已帮你预约' if no_booking?
+      return '数据错误'
+    end
+
   end
 
-  def is_finished
-    DateTime.now > self.end_time
-  end
-
-  def editable
-    self.schedule.editable
+  def is_completed
+    !(absence? && waiting?) && schedule.is_finished
   end
 
   def cancelable
-    editable && ['booked','waiting_confirmed','waiting'].include?(self.booking_status)
+     ['booked','waiting'].include?(booking_status) && in_cancel_limit_minutes
   end
 
-  def rebookable
-    if self.customer.membership_type == 'measured_card'
-      editable && ['cancelled'].include?(self.booking_status) && self.customer.membership_remaining_times >= 1 && (self.schedule.bookable || self.schedule.waitable)
-    else
-      editable && ['cancelled'].include?(self.booking_status) && (self.schedule.bookable || self.schedule.waitable)
-    end
-  end
 
-  def cancel_or_rebook
-    if cancelable
-      self.update(booking_status: 'cancelled')
-      schedule.change_queue
-      return
-    end
+  #def rebookable
+  #  if self.customer.membership_type == 'measured_card'
+  #    editable && ['cancelled'].include?(self.booking_status) && self.customer.membership_remaining_times >= 1 && (self.schedule.bookable || self.schedule.waitable)
+  #  else
+  #    editable && ['cancelled'].include?(self.booking_status) && (self.schedule.bookable || self.schedule.waitable)
+  #  end
+  #end
 
-    self.update(booking_status: 'booked') and return if rebookable && schedule.bookable
-    self.update(booking_status: 'waiting') and return if rebookable && schedule.waitable
-  end
+  #def cancel_or_rebook
+  #  if cancelable
+  #    self.update(booking_status: 'cancelled')
+  #    schedule.change_queue
+  #    return
+  #  end
+
+  #  self.update(booking_status: 'booked') and return if rebookable && schedule.bookable
+  #  self.update(booking_status: 'waiting') and return if rebookable && schedule.waitable
+  #end
 
   private
 
@@ -135,4 +159,20 @@ class Training < ApplicationRecord
 #    return -1 if old == 'absence' && new != 'absence'
 #    return 1 if old != 'absence' && new == 'absence'
 #  end
+
+  def in_cancel_limit_minutes
+    DateTime.now.advance(minutes: Setting.cancel_limit_minutes) < schedule.start_time
+  end
+
+  def check_queue
+    if in_cancel_limit_minutes
+      number = schedule.capacity - schedule.booked_number
+      if number > 0 && schedule.waiting_number > 0
+        number.times do
+          schedule.trainings.waiting.time_asc.first.update(booking_status: 'booked')
+        end
+      end
+    end
+  end
+
 end

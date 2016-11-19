@@ -34,16 +34,16 @@ author: Chen Xi
 
 
 <p id="prj"/>
-# 项目看板 
+# 项目看板
 
 日期 | 更新日志
 ----|----
-2016-10-18 	| 	提交‘[登录](#1)’接口 
+2016-10-18 	| 	提交‘[登录](#1)’接口
 2016-10-19	|	提交‘课程类别’，‘[门店](#5)’，更新‘[客户](#2)’；重装系统，解决中文问题；
 2016-10-20	|	提交‘[课程规则](#4)’，’[课程](#7)‘，更新’客户‘增加字段；
-2016-10-21	|	修改 客户，课程，增加按照门店过滤，按照微信，名字，手机搜索客户； 提交 [用户](#3)模块；编写测试代码； 
+2016-10-21	|	修改 客户，课程，增加按照门店过滤，按照微信，名字，手机搜索客户； 提交 [用户](#3)模块；编写测试代码；
 2016-10-22 	|  提交”[课程表](#8)‘，
-2016-10-23 | 提交”[会员操作](#10)“；提交”[训练](#9)“；提交 客户，训练的分页； 
+2016-10-23 | 提交”[会员操作](#10)“；提交”[训练](#9)“；提交 客户，训练的分页；
 2016-10-24 | 课程表对接中； 开发“课程表按周操作“功能；
 2016-10-25 | 发布“课程表[按周操作](#8.8),查询，复制，删除“；“批量发布，取消发布课程表”
 2016-10-26 | 修改批量操作bug；确认微信认证流程；写后端自动测试代码50%；
@@ -69,14 +69,15 @@ author: Chen Xi
 2015-11-16 | 基本功能测试结束，开始测试复杂业务逻辑；<br>BUG统计：<span style="color:red">未关闭:16, 已关闭：44（今日关闭8，新增16）</span>
 2015-11-17 | 提交报表；修改bug；进入验收测试阶段；
 2016-11-18 | 测试与修改Bug：BUG统计：<span style="color:red">未关闭:10, 已关闭：55（关闭11，新增5）</span>
-2016-11-19 | 修改bug：
+2016-11-19 | 修改提示有关的bug；与罗超对测试结果，记录流程修改3条，UI调整10条，bug反馈10条；
+2016-11-20 | 修改3个流程大改动；
 
 
 
 模块  | 后端开发 | 前端对接 | 问题 | 测试通过
 ----|----|----|----|---
 1 登录 		| 完成 | 完成 | 😄  | 👌
-2 会员客户 	| 修改 | 完成 | 😄  | 👌 
+2 会员客户 	| 修改 | 完成 | 😄  | 👌
 3 后台用户 	| 完成 | 完成 | 😄 | 👌
 4 课程规则 	| 完成 | 完成 | 😄 | 👌
 5 门店 		| 完成 | 完成 | 😄 | 👌
@@ -86,15 +87,21 @@ author: Chen Xi
 9 训练  	| 完成 | 完成| 😄 | 👀
 10 会员操作	| 完成 | 完成| 😄 | 👌
 11.1-3 微信-登录与验证	| 完成 | 完成| 😄  | 👌
-11.5-7 微信-课程预约	| 完成 | 完成 |😄 | 👀 
+11.5-7 微信-课程预约	| 完成 | 完成 |😄 | 👀
 11.4 微信-个人信息	| 完成| 完成 | 😄 | 👌
 11.8 微信-预约查询，修改	| 完成| 完成| 😄 | 👀
 12 报表 	| 完成 | 完成 | 😄 | 👀
 
-需要注意的变化：  
+需要注意的变化：
 <div style='color:red'>
-1. 客户，新增属性： membership_total_times, 此属性用于创建和修改；membership_remaining_times, 变成只读属性；显示客户时去掉weixin，token字段 修改的接口文档：2.1，2.2，2.3，2.5；  
+1. 客户，新增属性： membership_total_times, 此属性用于创建和修改；membership_remaining_times, 变成只读属性；显示客户时去掉weixin，token字段 修改的接口文档：2.1，2.2，2.3，2.5；
 2. schedule_operation接口，新增两个字段：schedule_reject_msg, customer_reject_msg, 用于输出在特定情况下的用户消息；修改的文档见11.6，11.7
+3. booking_limit_minutes | 课程允许预约时间（分钟）|课程开始前？分钟，客户可以预约。文档更新：4.1
+4. Training，流程调整：取消即删除，时间到默认为完成；涉及到的接口调整有：
+  a. 取消两个booking_status状态：cancelled 和 waiting_confirmed, 取消一个training_status 状态；接口更新：9， 9.1,
+  b. 取消训练的接口9.2,11.10
+  c. 增加两个只读字段： readable_status,  cancelable: 接口更新：9。11.8；11.9；
+5. 报表：字段简化，增加门店过滤  见接口修改：12.2, 12.1.
 </div>
 
 <p id="0"/>
@@ -116,7 +123,7 @@ API按照Restful风格设计, 所有管理端的api放在admin/后面；所有�
 
 ## 分页
 
-- 传递URL参数 
+- 传递URL参数
 - 参数格式：“page=2&per_page=1”，
  - page: 第几页，
  - per_page: 每页多少条
@@ -508,8 +515,9 @@ URI |  /admin/customers/:id
 ----|----|----
 booking_limit_days | 课程预约时间限制（天） | 客户可以预定未来？的天课程
 course_view_days | 课程浏览时间限制（天）|客户可以查看未来？天的课程
-cancel_limit_minutes | 课程冻结时间（分钟）|课程开始前？分钟，客户可以取消预约，可以自动排队
+cancel_limit_minutes | 课程允许取消时间（分钟）|课程开始前？分钟，客户可以取消预约，可以自动排队
 queue_limit_number| 允许排队人数（个）| 允许排队的人数（所有课程有效）
+booking_limit_minutes | 课程允许预约时间（分钟）|课程开始前？分钟，客户可以预约。
 
 
 ```json
@@ -885,7 +893,7 @@ URI |  /admin/settings/:key
 --------- | -----------
 Method | GET
 URI |  /admin/stores/1/courses?status=active 或者 /admin/courses?store_id=1&status=active
-参数类型 | URL 
+参数类型 | URL
 参数 | store_id, 为空不过滤，否则按照门店过滤, status= active/inactive；
 
 
@@ -1192,7 +1200,7 @@ URI |  /admin/schedules/:id
     ]
 }
 
-``` 
+```
 
 
 <p id="8.8"/>
@@ -1251,7 +1259,7 @@ URI |  /admin/schedules/:id
         }
     ]
 }
-``` 
+```
 
 ## 8.9 发布一周课程表
  | API说明
@@ -1280,8 +1288,8 @@ URI |  /admin/schedules/:id
 ----|----|----|----|----
  training[schedule_id]  | 课程表id    |int    | 必填 |schedule必须存在
  training[customer_id]  | 客户id    |int    | 必填 | customer必须存在
- training[booking_status]   | 预定状态 | enum   | 必填 | no_booking:未预定，由管理员直接创建；<br> booked: 已预定；<br>waiting: 排队中；<br> waiting_confirmed: <br> cancelled: 取消预定
- training[training_status]   | 训练状态 | enum   | 必填 | not_start: 未开始, <br> absence: 缺席,<br> be_late: 迟到, <br> complete: 完成训练
+ training[booking_status]   | 预定状态 | enum   | 必填 | no_booking:未预定，由管理员直接创建；<br> booked: 已预定；<br>waiting: 排队中；
+ training[training_status]   | 训练状态 | enum   | 必填 | normal: 正常, <br> absence: 缺席,<br> be_late: 迟到
  training[customer_name]   | 客户名称  | string  | 只读  | 来自cusrtomer
  training[start_time] | 开始时间    |datetime    | 只读 | 来自schedule
  training[end_time]   | 结束时间 | datetime   | 只读| 来自schedule
@@ -1291,21 +1299,40 @@ URI |  /admin/schedules/:id
  training[course_name]   | 课程名称  | string  | 只读  |来自schedule
  training[created_at] | 创建时间 | int | 自动修改 |
  training[updated_at] | 更新时间| int | 自动修改 |
+ training[readable-status] | 可直接显示在界面的训练的状态， | string | 只读 | 状态说明如下
+ training[cancelable] | 是否可取消（显示取消按钮） | boolean| 只读 |
 
-状态说明：
-
->1. 客户预约  
-> 1.1. 如果容量未满： booking_status: booked ; training_status: not_start;  
-> 1.2. 如果容量已满： booking_status: waiting ; training_status: not_start;  
+>>状态说明：
+```ruby
+def readable_status
+     if schedule.time_stage == 'finished'
+        return '课程已完成' if normal? && !waiting?
+        return '排队失败' if normal? && waiting?
+        return '课程迟到' if be_late?
+        return '缺席' if absence?
+        return '数据错误'
+      elsif schedule.time_stage == 'ongoing'
+        return '排队失败' if waiting?
+        return '课程进行中'
+      else #not_started
+        return '您已预约' if booked?
+        return '您已排队' if waiting?
+        return '门店已帮你预约' if no_booking?
+        return '数据错误'
+    end
+```
+>1. 客户预约
+> 1.1. 如果容量未满： booking_status: booked ; training_status: not_start;
+> 1.2. 如果容量已满： booking_status: waiting ; training_status: not_start;
 > 1.3. 如果有人取消，或者管理员操作‘确认排队’： booking_status: booked ; training_status: not_start;
 
->2. 客户取消预约：booking_status: cancelled ; training_status: not_start;
+>2. 客户取消预约：删除训练
 
->3. 课程结束，管理员签到  
->  3.1 如果预约的客户完成训练：booking_status: booked ; training_status: complete;  
->  3.2 如果预约的客户缺席训练：booking_status: booked ; training_status: absence;  
-> 3.3 如果预约的客户迟到：    booking_status: booked ; training_status: be_late;  
-> 3.4 如果由未预约的客户参加训练： booking_status: no_booking; training_status: complete;
+>3. 课程结束，管理员签到
+>  3.1 如果预约的客户完成训练：booking_status: booked/no_booking ; training_status: normal;
+>  3.2 如果预约的客户缺席训练：booking_status: booked/no_booking ; training_status: absence;
+>  3.3 如果预约的客户迟到：    booking_status: booked/no_booking ; training_status: be_late;
+> 3.4 如果由未预约的客户参加训练： booking_status: no_booking; training_status: normal;
 
 ## 9.1 获取训练列表
 
@@ -1322,72 +1349,53 @@ URI |  /admin/trainings?[store_id=1]&[customer_id=#]<br> 或 /admin/store/[store
 ```json
 
 {
-    "data": [
+"data": [
         {
-            "id": "1",
+            "id": "9",
             "type": "trainings",
             "attributes": {
                 "store-id": 1,
                 "store-name": "中关村店",
-                "customer-id": 1,
-                "customer-name": "张三",
-                "schedule-id": 1,
-                "start-time": "2016-10-21T16:13:52.000Z",
-                "end-time": "2016-10-21T16:58:52.000Z",
-                "course-id": 1,
-                "course-name": "测试课程",
+                "customer-id": 3,
+                "customer-name": "chenxi",
+                "schedule-id": 32,
+                "start-time": "2016-11-26T14:00:00.000Z",
+                "end-time": "2016-11-26T15:00:00.000Z",
+                "course-id": 2,
+                "course-name": "测试课程2",
                 "booking-status": "waiting",
-                "training-status": "absence",
-                "created-at": "2016-10-12T19:16:30.000Z",
-                "updated-at": "2016-10-23T03:01:22.000Z"
-            },
-            "relationships": {
-                "customer": {
-                    "data": {
-                        "id": "1",
-                        "type": "customers"
-                    }
-                }
+                "training-status": "normal",
+                "cancelable": true,
+                "created-at": "2016-11-12T17:14:44.308Z",
+                "readable-status": "您已排队",
+                "updated-at": "2016-11-12T17:14:44.308Z"
             }
         },
         {
-            "id": "2",
+            "id": "13",
             "type": "trainings",
             "attributes": {
                 "store-id": 1,
                 "store-name": "中关村店",
-                "customer-id": 1,
-                "customer-name": "张三",
-                "schedule-id": 1,
-                "start-time": "2016-10-21T16:13:52.000Z",
-                "end-time": "2016-10-21T16:58:52.000Z",
-                "course-id": 1,
-                "course-name": "测试课程",
+                "customer-id": 3,
+                "customer-name": "chenxi",
+                "schedule-id": 36,
+                "start-time": "2016-11-22T14:00:00.000Z",
+                "end-time": "2016-11-22T15:00:00.000Z",
+                "course-id": 2,
+                "course-name": "测试课程2",
                 "booking-status": "booked",
-                "training-status": "not_start",
-                "created-at": "2016-10-23T03:10:42.000Z",
-                "updated-at": "2016-10-23T03:10:42.000Z"
-            },
-            "relationships": {
-                "customer": {
-                    "data": {
-                        "id": "1",
-                        "type": "customers"
-                    }
-                }
+                "training-status": "normal",
+                "cancelable": true,
+                "created-at": "2016-11-12T17:14:44.351Z",
+                "readable-status": "您已预约",
+                "updated-at": "2016-11-12T17:14:44.351Z"
             }
-        },
+           },
 ```
 
-## 9.2 更新训练
-
- | API说明
---------- | -----------
-|  Method|  PUT
-|  URI|  /admin/trainings/[id]
-|  参数类型| form-data
-| 参数| 没有标注只读的都可以传入更新
-消息：| 200: 更新成功 <br> 404:未找到资源 <br> 422: 验证没通过
+## 9.2 取消训练
+同9.5
 
 ## 9.3 查看训练
 
@@ -1492,7 +1500,7 @@ URI |  /admin/operations/:id
 3. 注册：如果客户openid没有找到，则提示404，前端可以引导用户“请输入手机号”，系统将匹配手机号，如果找到（由管理员在后台输入过），则系统登记openid，同时通过验证；如果手机号没有匹配到，返回404，前台可以提示客户“请先成为会员再预约课程”，并提供给客户门店联系方式；
 
 
- 
+
 ## 11.1 客户验证
  | API说明
 --------- | -----------
@@ -1568,7 +1576,7 @@ URI |  /weixin/my_schedules[/%y-%m-%d]
 --------- | -----------
 Method | Get
 URI |  /weixin/my_info
-参数类型 | 
+参数类型 |
 参数 | 无
 消息 | 返回200，返回当前登录用户的个人信息
 
@@ -1627,17 +1635,26 @@ URI |  http://{{sitename}}/weixin/schedules/1137/schedule_operations
 参数 | 参数为课程表id
 消息 | 200：参数正确返回操作性Json， 404:没有找到课程，403:用户无权访问（没有发布的课程不能访问，不在同一个门店的课程不能访问，不在可视范围内的课程不能访问）；
 
-页面显示建议：  
+页面显示建议：
 
-
-* 如果 booking_status, 为‘not booked’, 根据情况显示“预约”或者“排队”按钮；   
+* 如果 booking_status, 为‘not booked’, 根据情况显示“预约”或者“排队”按钮；
   - “bookable:true, waitable:false”: 显示“预约”按钮
   - “bookable:false, waitable:true”: 显示“排队”按钮
-  - “bookable:false, waitable:false“: 显示原因：schedule-reject-msg；  
-* 如果 is_membership_valid 是false，则在用户点击后提示错误原因：customer-reject-msg  
+  - “bookable:false, waitable:false“: 显示原因：schedule-reject-msg；
+* 如果 is_membership_valid 是false，则在用户点击后提示错误原因：customer-reject-msg
+
+> schedule_reject_msg:可能的值
+  '你已经预约过该课程！'
+  '课程还未开放预约！'
+  "课程已经无法预约！"
+  "报名人数已满，下次早点来哦！"
+
+> customer_reject_msg:可能的值
+您的会员卡已被锁定！
+您的会员卡已经到期！
+您的已经没有可用的预约次数了！
 
 > 返回某个课程表项目对于当前用户的可操作性：
-
 ```json
 {
     "data": {
@@ -1710,32 +1727,47 @@ URI |  /weixin/my_trainings/[param]
 
 ```json
 {
-    "data": {
-        "id": "47",
-        "type": "trainings",
-        "attributes": {
-            "store-id": 2,
-            "store-name": "大望路店",
-            "customer-id": 2,
-            "customer-name": "李四",
-            "schedule-id": 4541,
-            "start-time": "2016-11-04T10:00:00.000Z",
-            "end-time": "2016-11-04T11:00:00.000Z",
-            "course-id": 2,
-            "course-name": "上肢训练",
-            "booking-status": "waiting",
-            "training-status": "not_start",
-            "cancelable": false,
-            "rebookable": false,
-            "created-at": "2016-11-01T11:54:52.000Z",
-            "updated-at": "2016-11-02T12:49:09.000Z"
+"data": [
+        {
+            "id": "9",
+            "type": "trainings",
+            "attributes": {
+                "store-id": 1,
+                "store-name": "中关村店",
+                "customer-id": 3,
+                "customer-name": "chenxi",
+                "schedule-id": 32,
+                "start-time": "2016-11-26T14:00:00.000Z",
+                "end-time": "2016-11-26T15:00:00.000Z",
+                "course-id": 2,
+                "course-name": "测试课程2",
+                "booking-status": "waiting",
+                "training-status": "normal",
+                "cancelable": true,
+                "created-at": "2016-11-12T17:14:44.308Z",
+                "readable-status": "您已排队",
+                "updated-at": "2016-11-12T17:14:44.308Z"
+            }
         },
-        "relationships": {
-            "customer": {
-                "data": {
-                    "id": "2",
-                    "type": "customers"
-                }
+        {
+            "id": "13",
+            "type": "trainings",
+            "attributes": {
+                "store-id": 1,
+                "store-name": "中关村店",
+                "customer-id": 3,
+                "customer-name": "chenxi",
+                "schedule-id": 36,
+                "start-time": "2016-11-22T14:00:00.000Z",
+                "end-time": "2016-11-22T15:00:00.000Z",
+                "course-id": 2,
+                "course-name": "测试课程2",
+                "booking-status": "booked",
+                "training-status": "normal",
+                "cancelable": true,
+                "created-at": "2016-11-12T17:14:44.351Z",
+                "readable-status": "您已预约",
+                "updated-at": "2016-11-12T17:14:44.351Z"
             }
         }
     }
@@ -1753,21 +1785,16 @@ URI |  /weixin/my_trainings/[training_id]
 消息 | 200：参数正确返回查询列表， 400:参数在列表之外；
 
 
-## 11.10 修改训练
+## 11.10 取消训练
 
  | API说明
 --------- | -----------
-Method | PUT
+Method | DELETE
 URI |  /weixin/trainings/[training_id]
 参数类型 | URL
-参数 | PUT到某个training，系统根据情况判断并处理：<br>1. 既不能取消，又不能重新book<br>2.如果可以取消，则设置状态为cancelled. 同时，将会自动其它排队用户设置为"waiting_confirmed"<br>3. 如果可以rebook，则视情况将状态修改为"booked" 或者 "waiting"
-消息 | 200：参数正确返回查询列表， 404:参数在列表之外； 403: 不允许修改
+参数 |  training_id
+消息 | 204：取消（删除）成功， 404:没找到； 409: 不允许取消训练（cancel_limit_minutes）
 
-> 200将会返回json
-
-```json
-
-```
 
 
 
@@ -1778,9 +1805,9 @@ URI |  /weixin/trainings/[training_id]
  | API说明
 --------- | -----------
 Method | GET
-URI |  http://{{sitename}}/admin/customer_report?from_date=2016-11-07&to_date=2016-11-20
-参数类型 | URL, 
-参数 | from_date/to_date, 可以一个或着全部为空；
+URI |  http://{{sitename}}/admin/customer_report?from_date=2016-11-07&to_date=2016-11-20&store_id=1
+参数类型 | URL,
+参数 | store_id/from_date/to_date, 可以一个或着全部为空；
 消息 | 200：参数正确返回查询列表
 > 200将会返回json
 > 一个客户一行，后面的统计根据所选时间范围计算；
@@ -1793,20 +1820,15 @@ URI |  http://{{sitename}}/admin/customer_report?from_date=2016-11-07&to_date=20
             "type": "customer-reports",
             "attributes": {
                 "customer-name": "chenxi",
-                "from-date": "2016-11-07",
-                "to-date": "2016-11-20",
-                "count-of-trainings": 23,
-                "count-of-waiting": 5,
-                "count-of-waiting-confirmed": 5,
-                "count-of-booked": 5,
-                "count-of-no-booking": 4,
-                "count-of-cancelled": 4,
-                "count-of-not-start": 5,
-                "count-of-be-late": 6,
-                "count-of-complete": 6,
-                "count-of-absence": 6,
-                "favorite-time-slots": "10:11~11:11,18 14:11~15:11,18 16:11~17:11,17", //格式为【时间段,次数】
-                "favarite-courses": "测试课程2:22,测试课程1:22,测试课程3:21" //格式为【课程名称,次数】
+                "store-name": "中关村店",
+                "from-date": null,
+                "to-date": null,
+                "count-of-valid-booking": 18,
+                "count-of-absence": 5,
+                "count-of-complete": 13,
+                "count-of-be-late": 0,
+                "favorite-time-slots": "14:11~15:11,18 10:11~11:11,17 16:11~17:11,17",
+                "favarite-courses": "测试课程2:22,测试课程3:21,测试课程1:21"
             }
         }
     ]
@@ -1819,10 +1841,10 @@ URI |  http://{{sitename}}/admin/customer_report?from_date=2016-11-07&to_date=20
 --------- | -----------
 Method | GET
 URI |  http://{{sitename}}/admin/course_report?from_date=2016-11-07&to_date=2016-11-20
-参数类型 | URL, 
-参数 | from_date/to_date, 可以一个或着全部为空；
+参数类型 | URL,
+参数 | store_id/from_date/to_date, 可以一个或着全部为空；
 消息 | 200：参数正确返回查询列表
-> 200将会返回json  
+> 200将会返回json
 > 一个课程一行，后面的统计根据所选时间范围计算；
 
 ```json
@@ -1833,22 +1855,15 @@ URI |  http://{{sitename}}/admin/course_report?from_date=2016-11-07&to_date=2016
             "type": "course-reports",
             "attributes": {
                 "course-name": "测试课程1",
-                "store-id": 1,
-                "store-name": "中关村店",
                 "course-type": "基础课程",
-                "from-date": "2016-11-07",
-                "to-date": "2016-11-08",
-                "total-capacity": 20,
-                "count-of-trainings": 2,
-                "count-of-waiting": 1,
-                "count-of-waiting-confirmed": 0,
-                "count-of-booked": 1,
-                "count-of-no-booking": 0,
-                "count-of-cancelled": 0,
-                "count-of-not-start": 0,
-                "count-of-be-late": 1,
-                "count-of-complete": 0,
-                "count-of-absence": 1
+                "store-name": "中关村店",
+                "from-date": null,
+                "to-date": null,
+                "total-capacity": 80,
+                "count-of-valid-booking": 6,
+                "count-of-absence": 2,
+                "count-of-complete": 4,
+                "count-of-be-late": 0
             }
         },
         {
@@ -1856,22 +1871,15 @@ URI |  http://{{sitename}}/admin/course_report?from_date=2016-11-07&to_date=2016
             "type": "course-reports",
             "attributes": {
                 "course-name": "测试课程2",
-                "store-id": 1,
-                "store-name": "中关村店",
                 "course-type": "基础课程",
-                "from-date": "2016-11-07",
-                "to-date": "2016-11-08",
-                "total-capacity": 20,
-                "count-of-trainings": 2,
-                "count-of-waiting": 0,
-                "count-of-waiting-confirmed": 0,
-                "count-of-booked": 1,
-                "count-of-no-booking": 1,
-                "count-of-cancelled": 0,
-                "count-of-not-start": 1,
-                "count-of-be-late": 0,
-                "count-of-complete": 1,
-                "count-of-absence": 0
+                "store-name": "中关村店",
+                "from-date": null,
+                "to-date": null,
+                "total-capacity": 80,
+                "count-of-valid-booking": 7,
+                "count-of-absence": 2,
+                "count-of-complete": 5,
+                "count-of-be-late": 0
             }
         },
         {
@@ -1879,24 +1887,18 @@ URI |  http://{{sitename}}/admin/course_report?from_date=2016-11-07&to_date=2016
             "type": "course-reports",
             "attributes": {
                 "course-name": "测试课程3",
-                "store-id": 1,
-                "store-name": "中关村店",
                 "course-type": "基础课程",
-                "from-date": "2016-11-07",
-                "to-date": "2016-11-08",
-                "total-capacity": 20,
-                "count-of-trainings": 2,
-                "count-of-waiting": 1,
-                "count-of-waiting-confirmed": 1,
-                "count-of-booked": 0,
-                "count-of-no-booking": 0,
-                "count-of-cancelled": 0,
-                "count-of-not-start": 0,
-                "count-of-be-late": 1,
-                "count-of-complete": 0,
-                "count-of-absence": 1
+                "store-name": "中关村店",
+                "from-date": null,
+                "to-date": null,
+                "total-capacity": 70,
+                "count-of-valid-booking": 5,
+                "count-of-absence": 1,
+                "count-of-complete": 4,
+                "count-of-be-late": 0
             }
         }
     ]
-}```
+}
+```
 

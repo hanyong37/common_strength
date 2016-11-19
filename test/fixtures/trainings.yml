@@ -2,4 +2,4 @@ one:
   customer: luochao
   schedule: one
   booking_status: 'booked'
-  training_status: 'not_start'
+  training_status: 'normal'

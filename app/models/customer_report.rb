@@ -7,50 +7,40 @@ class CustomerReport
 
   attr_accessor :id,
     :customer_name,
+    :store_name,
     :from_date,
     :to_date,
-    :count_of_trainings,
-    :count_of_waiting ,
-    :count_of_waiting_confirmed ,
-    :count_of_booked ,
-    :count_of_no_booking,
-    :count_of_cancelled,
-    :count_of_not_start,
-    :count_of_be_late,
-    :count_of_complete,
+    :count_of_valid_booking,
     :count_of_absence,
+    :count_of_complete,
+    :count_of_be_late,
     :favorite_time_slots,
     :favarite_courses
 
-  def initialize(customer_id, from_date, to_date)
+  def initialize(customer_id,from_date, to_date)
 
     return nil if customer_id.blank?
     customer = Customer.find_by_id customer_id
-    trainings = customer.trainings.from_date(from_date).to_date(to_date)
+    trainings = customer.trainings.from_date(from_date).to_date(to_date).finished
 
     @id = customer_id
     @customer_name = customer.name
+    @store_name = customer.store_name
     @from_date = from_date
     @to_date = to_date
-    @count_of_trainings = trainings.size
-    #booking status
-    @count_of_booked = trainings.booked.size
-    @count_of_no_booking = trainings.no_booking.size
-    @count_of_waiting = trainings.waiting.size
-    @count_of_waiting_confirmed = trainings.waiting_confirmed.size
-    @count_of_cancelled = trainings.cancelled.size
-    #training status
-    @count_of_not_start =trainings.not_start.size
-    @count_of_be_late = trainings.be_late.size
-    @count_of_absence = trainings.absence.size
-    @count_of_complete = trainings.complete.size
-    @favorite_time_slots = customer.favorite_time_slots
-    @favarite_courses = customer.favarite_courses
+
+    @count_of_valid_booking= trainings.valid_booking.size
+    @count_of_absence = trainings.valid_booking.absence.size
+    @count_of_complete = trainings.valid_booking.attended.size
+    @count_of_be_late = trainings.valid_booking.be_late.size
+
+    @favorite_time_slots = trainings.unscoped.joins(:schedule).group('to_char(schedules.start_time, \'HH24:mm\') || \'~\' ||to_char(schedules.end_time, \'HH24:mm\')').count.sort_by{|k,v| v}.reverse.take(3).map{|e| e.join(',')}.join(' ')
+    @favarite_courses =  trainings.unscoped.joins(:schedule).group('schedules.course_id').count.sort_by{|id, count| count}.reverse.take(3).map{|e| "#{Course.find(e[0]).name}:#{e[1]}"}.join(',')
   end
 
-  def self.all(from_date, to_date)
+  def self.all(store_id,from_date, to_date)
     crs = []
-    Customer.all.each do |cst|
+    Customer.by_store(store_id).each do |cst|
       crs << self.new(cst.id, from_date, to_date)
     end
     return crs

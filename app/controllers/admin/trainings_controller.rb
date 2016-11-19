@@ -48,14 +48,4 @@ class Admin::TrainingsController < Admin::ApplicationController
     params.require(:training).permit(:customer_id, :schedule_id, :booking_status, :training_status)
   end
 
-#  def set_conditions
-#    condition = init_condition
-#    condition = add_store_filter_condition(condition)
-#    #condition = add_customer_filter_condition(condition)
-#    clause = ' AND (schedules.store_id = ?)'
-#    options = [ params[:store_id]]
-#    condition = add_params_condition(condition, params[:store_id],clause, options)
-#
-#  end
-
 end

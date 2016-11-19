@@ -8,9 +8,10 @@
 
 settings = Setting.create([
   {key: 'booking_limit_days', value: '7'},
-  {key: 'course_view_days', value: '7'},
-  {key: 'cancel_limit_minutes', value: '7'},
-  {key: 'queue_limit_number', value: '7'},
+  {key: 'course_view_days', value: '2'},
+  {key: 'cancel_limit_minutes', value: '40'},
+  {key: 'queue_limit_number', value: '2'},
+  {key: 'booking_limit_minutes', value: '5'},
 ])
 
 users = User.create([

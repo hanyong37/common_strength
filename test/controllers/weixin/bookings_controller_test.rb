@@ -29,7 +29,7 @@ class Weixin::BookingsControllerTest < ActionDispatch::IntegrationTest
   test "409 for existing training" do
       @schedule_new.trainings.create(customer_id: customers(:luochao).id,
                                      booking_status: 'waiting',
-                                     training_status: 'not_start')
+                                     training_status: 'normal')
     assert_no_difference '@schedule_new.reload.trainings.size' do
       post '/weixin/schedules/'+@schedule_new.id.to_s+'/booking', headers: weixin_auth_header
     end
@@ -41,7 +41,7 @@ class Weixin::BookingsControllerTest < ActionDispatch::IntegrationTest
     Setting.queue_limit_number = 1
     @schedule_new.trainings.create(customer_id: customers(:ningmeng).id,
                                    booking_status: 'booked',
-                                   training_status: 'not_start')
+                                   training_status: 'normal')
     post '/weixin/schedules/'+@schedule_new.id.to_s+'/booking', headers: weixin_auth_header
     assert_response :success
     assert jresponse['data']['attributes']['booking-status'] == 'waiting'
@@ -67,7 +67,7 @@ class Weixin::BookingsControllerTest < ActionDispatch::IntegrationTest
     Setting.queue_limit_number = 0
     @schedule_new.trainings.create(customer_id: customers(:ningmeng).id,
                                    booking_status: 'booked',
-                                   training_status: 'not_start')
+                                   training_status: 'normal')
     post '/weixin/schedules/'+@schedule_new.id.to_s+'/booking', headers: weixin_auth_header
     assert_response :conflict
   end

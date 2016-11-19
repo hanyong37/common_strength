@@ -26,6 +26,6 @@ class Weixin::BookingsController < Weixin::ApplicationController
   private
 
   def create_training(booking_status)
-    @schedule.trainings.create(customer_id: @current_customer.id, booking_status: booking_status, training_status: 'not_start')
+    @schedule.trainings.create(customer_id: @current_customer.id, booking_status: booking_status, training_status: 'normal')
   end
 end

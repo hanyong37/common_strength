@@ -13,10 +13,11 @@ class Schedule < ApplicationRecord
   scope :by_week , ->(monday_date) { where("#{START_DATE_IN_CST} >= ? and #{START_DATE_IN_CST} <= ?", Date.parse(monday_date), Date.parse(monday_date)+6.days) if monday_date.present? && (begin Date.parse(monday_date); rescue ArgumentError;  false; end)}
 
   scope :viewable , -> {where("is_published = ? and #{START_DATE_IN_CST} < ?",true, Date.today.advance(days: Setting.course_view_days.days))}
+  scope :time_asc, ->{order(start_time: :asc)}
   #scope :published, -> {where(is_published:true)}
 
   def store_name
-    self.store.name
+    store.name
   end
 
   def course_type_name
@@ -28,65 +29,66 @@ class Schedule < ApplicationRecord
   end
 
   def course_name
-    self.course.name
+    course.name
   end
 
+  #以下为状态字段
   def booked_number
-    self.trainings.where.not(booking_status: :cancelled).count
+    trainings.valid_booking.size
   end
 
   def waiting_number
-    self.trainings.waiting.count
+    trainings.waiting.size
   end
 
   def complete_number
-    trainings.complete.size
+    trainings.finished.valid_booking.attended.size
   end
-
-  def cancelled_number
-    self.trainings.cancelled.count
-  end
-
 
   def bookable
-    editable  && in_capacity
+    in_capacity && in_booking_limit_days && in_booking_limit_minutes
   end
 
   def waitable
-    editable && !in_capacity && in_queue_limit_number
+    in_booking_limit_days && !in_capacity && in_queue_limit_number
   end
 
-  def editable
-    in_booking_limit_days && in_cancel_limit_minutes
-  end
-
-
-  def change_queue
-    if in_cancel_limit_minutes
-      queue = self.trainings.waiting.order(:created_at)
-      queue.first.update(booking_status: 'booked') and return true unless queue.blank?
+  def time_stage
+    if DateTime.now >= end_time
+      return 'finished'
+    elsif DateTime.now >= start_time && DateTime.now < end_time
+      return 'ongoing'
+    else
+      return 'not_started'
     end
-      return false
   end
 
-
-
-  def in_booking_limit_days
-    self.start_time.to_date <= Date.today+Setting.booking_limit_days.days
-  end
-
-  def in_cancel_limit_minutes
-    DateTime.now.advance(minutes: Setting.cancel_limit_minutes) < self.start_time
-  end
-
-  def in_queue_limit_number
-    self.trainings.waiting.size < Setting.queue_limit_number
-  end
-
-  def in_capacity
-    self.trainings.valid_booking.count < self.capacity
+  def reject_msg
+    unless bookable || waitable
+      return '课程还未开放预约！' unless in_booking_limit_days
+      return "课程已经无法预约！" unless in_booking_limit_minutes
+      return "报名人数已满，下次早点来哦！" unless in_capacity || in_queue_limit_number
+    else
+      return ""
+    end
   end
 
 
   private
+  def in_booking_limit_days
+    start_time.to_date <= Date.today+Setting.booking_limit_days.days
+  end
+
+  def in_booking_limit_minutes
+    DateTime.now.advance(minutes: Setting.booking_limit_minutes) < start_time
+  end
+
+  def in_queue_limit_number
+    trainings.waiting.size < Setting.queue_limit_number
+  end
+
+  def in_capacity
+    trainings.valid_booking.count < capacity
+  end
+
 end
