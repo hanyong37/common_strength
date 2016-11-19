@@ -3,7 +3,7 @@ require 'test_helper'
 class TrainingTest < ActiveSupport::TestCase
 
   test 'change membership when training changes' do
-    customers(:luochao).update(membership_type: 'measured_card', membership_remaining_times: 1)
+    customers(:luochao).update(membership_type: 'measured_card', membership_total_times: 1)
     training = trainings(:one)
     #booking_status booked => cancelled
     assert_difference 'training.customer.reload.membership_remaining_times', 1 do
@@ -42,7 +42,7 @@ class TrainingTest < ActiveSupport::TestCase
     assert training.cancelable
 
     #test for measured_card
-    training.customer.update(membership_type:  "measured_card", membership_remaining_times: 10)
+    training.customer.update(membership_type:  "measured_card", membership_total_times: 10)
     training.cancel_or_rebook
     assert training.booking_status = 'cancelled'
     assert training.rebookable

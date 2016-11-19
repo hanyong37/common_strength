@@ -6,17 +6,20 @@ class Weixin::BookingsController < Weixin::ApplicationController
 
     so = ScheduleOperation.new(@schedule, @current_customer)
 
-    if so.booking_status != 'not_booked'
-      head 200 and return
-    elsif so.bookable
-      create_training('booked')
-      render json: ScheduleOperation.new(@schedule, @current_customer)
-    elsif so.waitable
-      create_training('waiting')
-      render json:  ScheduleOperation.new(@schedule, @current_customer)
-    else #can't book, can't wait, means no capacity at all
-      head 409 and return
+    if so.is_membership_valid
+      if so.bookable
+        create_training('booked')
+        render json: ScheduleOperation.new(@schedule, @current_customer)
+      elsif so.waitable
+        create_training('waiting')
+        render json:  ScheduleOperation.new(@schedule, @current_customer)
+      else
+        render json: so, status: :conflict
+      end
+    else
+      render json: so, status: :conflict
     end
+
   end
 
 

@@ -8,6 +8,7 @@ class Weixin::BookingsControllerTest < ActionDispatch::IntegrationTest
                                     start_time: DateTime.now+1.days,
                                     end_time: DateTime.now+60.minutes,
                                     is_published:true)
+    customers(:luochao).update(membership_type: 'time_card', membership_duedate: Date.today.advance(years:1))
   end
 
   test "200 for success" do
@@ -18,21 +19,21 @@ class Weixin::BookingsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "200 for success for measured_card" do
-    customers(:luochao).update(membership_type: 'measured_card', membership_remaining_times: 3)
+    customers(:luochao).update(membership_type: 'measured_card', membership_total_times: 3)
     assert_difference '@schedule_new.reload.trainings.size', 1 do
       post '/weixin/schedules/'+@schedule_new.id.to_s+'/booking', headers: weixin_auth_header
     end
     assert_response :success
   end
 
-  test "200 for existing training" do
+  test "409 for existing training" do
       @schedule_new.trainings.create(customer_id: customers(:luochao).id,
                                      booking_status: 'waiting',
                                      training_status: 'not_start')
     assert_no_difference '@schedule_new.reload.trainings.size' do
       post '/weixin/schedules/'+@schedule_new.id.to_s+'/booking', headers: weixin_auth_header
     end
-    assert_response :success
+    assert_response :conflict
   end
 
   test "200 and create waiting" do

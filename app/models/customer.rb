@@ -21,6 +21,15 @@ class Customer < ApplicationRecord
     self.store.name
   end
 
+  def membership_remaining_times
+    return 0 if time_card?
+    membership_total_times - trainings.complete.size - trainings.be_late.size - trainings.not_start.waiting_confirmed.size - trainings.not_start.booked.size
+  end
+
+  def is_weixin_connected
+    return weixin.present?
+  end
+
   def favorite_time_slots
     trainings.unscoped.joins(:schedule).group('to_char(schedules.start_time, \'HH24:mm\') || \'~\' ||to_char(schedules.end_time, \'HH24:mm\')').count.sort_by{|k,v| v}.reverse.take(3).map{|e| e.join(',')}.join(' ')
     #trainings.uniq(:course_name)

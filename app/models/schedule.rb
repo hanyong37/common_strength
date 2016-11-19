@@ -8,9 +8,11 @@ class Schedule < ApplicationRecord
 
   scope :by_store , ->(store) {where(store_id: store) if store.present?}
   scope :by_course , ->(course) {where(course_id: course) if course.present?}
-  scope :by_date , ->(date) { where("#{start_time_to_date} = ?", date) if date.present?}
-  scope :by_week , ->(monday_date) { where("#{start_time_to_date} >= ? and #{start_time_to_date} <= ?", Date.parse(monday_date), Date.parse(monday_date)+6.days) if monday_date.present? && (begin Date.parse(monday_date); rescue ArgumentError;  false; end)}
-  scope :viewable , -> {where("is_published = ? and #{start_time_to_date} < ?",true, Date.today.advance(days: Setting.course_view_days.days))}
+  scope :by_date , ->(date) { where("#{START_DATE_IN_CST} = ?", date) if date.present?}
+
+  scope :by_week , ->(monday_date) { where("#{START_DATE_IN_CST} >= ? and #{START_DATE_IN_CST} <= ?", Date.parse(monday_date), Date.parse(monday_date)+6.days) if monday_date.present? && (begin Date.parse(monday_date); rescue ArgumentError;  false; end)}
+
+  scope :viewable , -> {where("is_published = ? and #{START_DATE_IN_CST} < ?",true, Date.today.advance(days: Setting.course_view_days.days))}
   #scope :published, -> {where(is_published:true)}
 
   def store_name
@@ -45,6 +47,7 @@ class Schedule < ApplicationRecord
     self.trainings.cancelled.count
   end
 
+
   def bookable
     editable  && in_capacity
   end
@@ -66,11 +69,7 @@ class Schedule < ApplicationRecord
       return false
   end
 
-  private
 
-  def self.start_time_to_date
-    "date(start_time AT TIME ZONE 'CST')".freeze
-  end
 
   def in_booking_limit_days
     self.start_time.to_date <= Date.today+Setting.booking_limit_days.days
@@ -89,4 +88,5 @@ class Schedule < ApplicationRecord
   end
 
 
+  private
 end

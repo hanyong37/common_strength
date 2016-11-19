@@ -6,12 +6,12 @@ class Admin::CustomersController < Admin::ApplicationController
     # TODO: change condition to scope;
     params.permit(:store_id, :qstring)
     @customers = paginate(Customer.where(set_conditions).by_locked(to_bool(params[:locked])))
-    render json: @customers, meta: paginate_meta(@customers)
+    render json: @customers ,fields: {customers: [:id, :name, :mobile, :is_weixin_connected, :membership_type, :store_id, :membership_remaining_times,:membership_total_times, :membership_duedate, :store_name, :is_locked]}, meta: paginate_meta(@customers)
   end
 
   # GET /customers/1
   def show
-    render json: @customer
+    render json: @customer,fields: {customers: [:id, :name, :mobile, :is_weixin_connected, :membership_type, :store_id, :membership_remaining_times,:membership_total_times, :membership_duedate, :store_name, :is_locked]}
   end
 
   # POST /customers
@@ -50,7 +50,7 @@ class Admin::CustomersController < Admin::ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def customer_params
-    params.require(:customer).permit(:name, :mobile, :weixin, :membership_type, :membership_duedate, :membership_remaining_times, :store_id, :is_locked)
+    params.require(:customer).permit(:name, :mobile, :weixin, :membership_type, :membership_duedate, :membership_total_times, :store_id, :is_locked)
   end
 
   def set_conditions
@@ -69,7 +69,7 @@ class Admin::CustomersController < Admin::ApplicationController
     operation = Operation.new(user_id: current_user.id,
                               customer_id: customer.id,
                               target: 'customer',
-                              description: "系统用户: '#{current_user.full_name}'修改了客户:'#{customer.name}', 会员类型： '#{customer.membership_type}', 会员到期时间:'#{customer.membership_duedate}', 会员卡剩余次数:'#{customer.membership_remaining_times}' ",
+                              description: "系统用户: '#{current_user.full_name}'修改了客户:'#{customer.name}', 会员类型： '#{customer.membership_type}', 会员到期时间:'#{customer.membership_duedate}', 会员卡次数:'#{customer.membership_total_times}' ",
                              operation_memo: params[:operation_memo])
     operation.save!
   end

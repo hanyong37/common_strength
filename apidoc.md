@@ -67,6 +67,10 @@ author: Chen Xi
 2016-11-14 | 电话沟通报表接口；修改bug；<br>BUG统计：<span style="color:red">未关闭：10；已关闭：29</span>
 2015-11-15 | 修改Schedule接口；<br>测试与改bug：<br>BUG统计：<span style="color:red">未关闭:8, 已关闭：36</span>
 2015-11-16 | 基本功能测试结束，开始测试复杂业务逻辑；<br>BUG统计：<span style="color:red">未关闭:16, 已关闭：44（今日关闭8，新增16）</span>
+2015-11-17 | 提交报表；修改bug；进入验收测试阶段；
+2016-11-18 | 测试与修改Bug：BUG统计：<span style="color:red">未关闭:10, 已关闭：55（关闭11，新增5）</span>
+2016-11-19 | 修改bug：
+
 
 
 模块  | 后端开发 | 前端对接 | 问题 | 测试通过
@@ -74,22 +78,24 @@ author: Chen Xi
 1 登录 		| 完成 | 完成 | 😄  | 👌
 2 会员客户 	| 修改 | 完成 | 😄  | 👌 
 3 后台用户 	| 完成 | 完成 | 😄 | 👌
-4 课程规则 	| 完成 | 完成 | 😄 | 👀
+4 课程规则 	| 完成 | 完成 | 😄 | 👌
 5 门店 		| 完成 | 完成 | 😄 | 👌
 6 课程分类 	| 完成 | 完成 | 😄 | 👌
 7 课程 		| 完成 | 完成 |  😄 | 👌
-8 课程表  	| 完成 | 完成 | 😄 | 👀
+8 课程表  	| 完成 | 完成 | 😄 | 👌
 9 训练  	| 完成 | 完成| 😄 | 👀
 10 会员操作	| 完成 | 完成| 😄 | 👌
 11.1-3 微信-登录与验证	| 完成 | 完成| 😄  | 👌
 11.5-7 微信-课程预约	| 完成 | 完成 |😄 | 👀 
 11.4 微信-个人信息	| 完成| 完成 | 😄 | 👌
-11.8 微信-预约查询，修改	| 完成| 完成| 😄 |👀
-12 报表 	| 完成 | 进行中 | 
+11.8 微信-预约查询，修改	| 完成| 完成| 😄 | 👀
+12 报表 	| 完成 | 完成 | 😄 | 👀
 
 需要注意的变化：  
-
-
+<div style='color:red'>
+1. 客户，新增属性： membership_total_times, 此属性用于创建和修改；membership_remaining_times, 变成只读属性；显示客户时去掉weixin，token字段 修改的接口文档：2.1，2.2，2.3，2.5；  
+2. schedule_operation接口，新增两个字段：schedule_reject_msg, customer_reject_msg, 用于输出在特定情况下的用户消息；修改的文档见11.6，11.7
+</div>
 
 <p id="0"/>
 # 0. API概述
@@ -221,51 +227,32 @@ URI | /admin/stores/1/customers?locked=true&qstring=? <br>OR /admin/customers[?s
 ```json
 
 {
-  "data": [
-    {
-      "id": "1",
-      "type": "customers",
-      "attributes": {
-        "name": "张三",
-        "mobile": "13912345678",
-        "weixin": "wx123456",
-        "membership-type": "time_card",
-        "store-id": 1,
-        "membership-remaining-times": null,
-        "membership-duedate": "2010-12-31",
-        "store-name": "中关村店"
-      },
-      "relationships": {
-        "trainings": {
-          "data": [
-            {
-              "id": "1",
-              "type": "trainings"
+    "data": [
+        {
+            "id": "3",
+            "type": "customers",
+            "attributes": {
+                "name": "chenxi",
+                "mobile": "18011520426",
+                "is-weixin-connected": true,
+                "membership-type": "measured_card",
+                "store-id": 1,
+                "membership-remaining-times": -18,
+                "membership-total-times": 20,
+                "membership-duedate": "2016-12-31",
+                "store-name": "中关村店",
+                "is-locked": false
             }
-          ]
         }
-      }
-    },
-    {
-      "id": "2",
-      "type": "customers",
-      "attributes": {
-        "name": "李四",
-        "mobile": "18912345678",
-        "weixin": "wx234567",
-        "membership-type": "measured_card",
-        "store-id": 2,
-        "membership-remaining-times": 20,
-        "membership-duedate": null,
-        "store-name": "大望路店"
-      },
-      "relationships": {
-        "trainings": {
-          "data": []
-        }
-      }
+    ],
+    "links": {},
+    "meta": {
+        "current-page": 1,
+        "next-page": null,
+        "prev-page": null,
+        "total-pages": 1,
+        "total-count": 1
     }
-  ]
 }
 
 
@@ -285,30 +272,22 @@ URI |  /admin/customers/:id
 
 ```json
 {
-  "data": {
-    "id": "1",
-    "type": "customers",
-    "attributes": {
-      "name": "张三",
-      "mobile": "13912345678",
-      "weixin": "wx123456",
-      "membership-type": "time_card",
-      "store-id": 1,
-      "membership-remaining-times": null,
-      "membership-duedate": "2010-12-31",
-      "store-name": "中关村店"
-    },
-    "relationships": {
-      "trainings": {
-        "data": [
-          {
-            "id": "1",
-            "type": "trainings"
-          }
-        ]
-      }
+    "data": {
+        "id": "3",
+        "type": "customers",
+        "attributes": {
+            "name": "chenxi",
+            "mobile": "18011520426",
+            "is-weixin-connected": true,
+            "membership-type": "measured_card",
+            "store-id": 1,
+            "membership-remaining-times": -18,
+            "membership-total-times": 20,
+            "membership-duedate": "2016-12-31",
+            "store-name": "中关村店",
+            "is-locked": false
+        }
     }
-  }
 }
 ```
 
@@ -319,7 +298,7 @@ URI |  /admin/customers/:id
 |  Method| POST
 |  URI|  /admin/customers/
 |  参数类型| form-data
-| 参数| customer[name]:必填，不重复 <br> customer[mobile]:必填，不重复  <br> customer[weixin]:必填，不重复 <br> customer[store_id]: 必填，store必须存在。 <br> customer[membership_type] 必填, <br> ---'measured_card' 表示次卡，'time_card' 表示时间卡 <br> customer[membership_remaining_times]: 前端校验，如果是次卡则必填； <br> customer[membership_duedate]: 前端校验，如果是时间卡则必填； <br>
+| 参数| customer[name]:必填，不重复 <br> customer[mobile]:必填，不重复  <br> customer[weixin]:必填，不重复 <br> customer[store_id]: 必填，store必须存在。 <br> customer[membership_type] 必填, <br> ---'measured_card' 表示次卡，'time_card' 表示时间卡 <br> customer[membership_total_times]: 客户总次数；前端校验，如果是次卡则必填； <br> customer[membership_duedate]: 前端校验，如果是时间卡则必填； <br>
 
 
 
@@ -413,7 +392,7 @@ URI |  /admin/customers/:id
 |  Method|  PUT
 |  URI|  /admin/customers/[id]
 |  参数类型| form-data
-| 参数| customer[name]<br> customer[mobile]<br> customer[weixin]<br> customer[store_id]<br> customer[membership_type]<br> customer[membership_remaining_times]<br> customer[membership_duedate]<br>--以上参数至少传一个。
+| 参数| customer[name]<br> customer[mobile]<br> customer[weixin]<br> customer[store_id]<br> customer[membership_type]<br> customer[membership_total_times]<br> customer[membership_duedate]<br>--以上参数至少传一个。
 | 特殊参数 | operation_memo: text <br> -- 所有对客户的修改都要求用户写“备忘”，例如：“客户因特殊情况要求延期一个月，因此修改客户时间卡。。”，这个字段跟客户其它字段一起传入此接口，必须提供。详见  [ 10.会员操作 ]	(#10)
 消息：| 200: 更新成功 <br> 404:未找到资源 <br> 422: 验证没通过
 
@@ -1484,7 +1463,7 @@ URI |  /admin/customers/[:customer_id]/operations <br>或：/admin/users/[:users
             "attributes": {
                 "user-id": 4,
                 "customer-id": 2,
-                "description": "系统用户: 'admin'修改了客户:'李四', 会员类型： 'time_card', 会员到期时间:'2017-01-31', 会员卡剩余次数:'20' ",
+                "description": "系统用户: 'admin'修改了客户:'李四', 会员类型： 'time_card', 会员到期时间:'2017-01-31', 会员卡次数:'20' ",
                 "operation-memo": null,
                 "created-at": "2016-10-22T16:02:17.000Z"
             }
@@ -1654,30 +1633,29 @@ URI |  http://{{sitename}}/weixin/schedules/1137/schedule_operations
 * 如果 booking_status, 为‘not booked’, 根据情况显示“预约”或者“排队”按钮；   
   - “bookable:true, waitable:false”: 显示“预约”按钮
   - “bookable:false, waitable:true”: 显示“排队”按钮
-  - “bookable:false, waitable:false“: 显示提示“课程已满” （建议同时显示“已预约人数”和“课程容量”两个数字： 比如：10/8 表示8个人课程，目前有8个人报名，2个人排队，这种情况下既无法预约，也无法排队；）
-* 如果 booking_status, 为其它，则用户无法操作，只能读取信息：  
-	- ‘waiting’: "您已经排队"
-	- ‘booked’: "您已经预约"
-	- 'cancelled': "您已经取消预约"
-* 如果 is_membership_valid 是false，则无论课程是否可用，但会员权益不允许他预定，可提示“课程超出您的会员卡有效期”（时间卡）；或者“您已经没有剩余的消费次数，请及时充值！”，然后阻止客户提交booking；
+  - “bookable:false, waitable:false“: 显示原因：schedule-reject-msg；  
+* 如果 is_membership_valid 是false，则在用户点击后提示错误原因：customer-reject-msg  
 
 > 返回某个课程表项目对于当前用户的可操作性：
 
 ```json
 {
     "data": {
-        "id": "4541_2",
+        "id": "16_3",
         "type": "schedule-operations",
         "attributes": {
-            "booking-status": "waiting",
-            "schedule-id": 4541,
+            "schedule-id": 16,
             "bookable": false,
             "waitable": false,
-            "customer-id": 2,
+            "booking-status": "booked",
+            "schedule-reject-msg": "你已经预约过该课程！",
+            "customer-id": 3,
             "is-membership-valid": false,
-            "customer-membership-type": "time_card",
-            "customer-duedate": "2016-01-23",
-            "customer-remainming-times": 20
+            "customer-is-locked": false,
+            "customer-membership-type": "measured_card",
+            "customer-duedate": "2016-12-31",
+            "customer-remainming-times": -18,
+            "customer-reject-msg": "您的已经没有可用的预约次数了！"
         }
     }
 }
@@ -1690,22 +1668,29 @@ Method | POST
 URI |  /weixin/schedules/[schedule_id]/booking
 参数类型 | URL
 参数 | 参数为课程表id
-消息 | 200：参数正确返回操作性Json，如果预约已经存在，则直接返回，否则就创建再返回， 404:没有找到课程，403:用户无权访问；409: 如果创建时发现容量已满导致无法预约，则返回409
+消息 | 200：参数正确返回操作性Json，404:没有找到课程，403:用户无权访问；409: 如果创建时发现课程或者客户权限不可用，则返回schduele_operation json:
 
 * 预约和排队都是这个接口，后台会自动判断创建“预约”还是“排队”
-* 操作成功后会返回一个operation json, 前台可以根据这个刷新此课程的显示状态；
+* 操作会返回一个operation json, 无论是200还是409：
 
 ```json
 {
     "data": {
-        "id": "4541",
+        "id": "16_3",
         "type": "schedule-operations",
         "attributes": {
-            "schedule-id": 4541,
-            "customer-id": 2,
-            "booking-status": "waiting", //如果是预约状态更新为booked；
+            "schedule-id": 16,
             "bookable": false,
-            "waitable": false
+            "waitable": false,
+            "booking-status": "booked",
+            "schedule-reject-msg": "你已经预约过该课程！",
+            "customer-id": 3,
+            "is-membership-valid": false,
+            "customer-is-locked": false,
+            "customer-membership-type": "measured_card",
+            "customer-duedate": "2016-12-31",
+            "customer-remainming-times": -18,
+            "customer-reject-msg": "您的已经没有可用的预约次数了！"
         }
     }
 }

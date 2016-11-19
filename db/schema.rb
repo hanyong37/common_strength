@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161111044039) do
+ActiveRecord::Schema.define(version: 20161118182237) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -39,12 +39,12 @@ ActiveRecord::Schema.define(version: 20161111044039) do
     t.string   "name"
     t.string   "mobile"
     t.string   "weixin"
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
     t.integer  "store_id"
     t.integer  "membership_type"
     t.date     "membership_duedate"
-    t.integer  "membership_remaining_times"
+    t.integer  "membership_total_times"
     t.boolean  "is_locked"
     t.string   "token"
     t.index ["store_id"], name: "index_customers_on_store_id", using: :btree

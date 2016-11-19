@@ -47,7 +47,7 @@ class Weixin::ScheduleOperationsControllerTest < ActionDispatch::IntegrationTest
 
   test "test customer measured_card" do
     @schedule_new.update(is_published: true)
-    customers(:luochao).update(membership_type: 'measured_card' , membership_remaining_times: 0)
+    customers(:luochao).update(membership_type: 'measured_card' , membership_total_times: 0)
 
     get '/weixin/schedules/'+@schedule_new.id.to_s+'/schedule_operations', headers: weixin_auth_header
 

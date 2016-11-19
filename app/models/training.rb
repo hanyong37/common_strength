@@ -5,10 +5,11 @@ class Training < ApplicationRecord
   belongs_to :customer
   belongs_to :schedule
 
-  before_save :check_customer_membership, if: "self.customer.measured_card?"
-  after_save :change_customer_membership, if: "self.customer.measured_card?"
+  #before_save :check_customer_membership, if: "self.customer.measured_card?"
+  #after_save :change_customer_membership, if: "self.customer.measured_card?"
 
   default_scope {joins(:schedule).order('schedules.start_time desc')}
+
   scope :valid_booking, -> {where('booking_status in (?)',
                                   [Training.booking_statuses[:booked],
                                    Training.booking_statuses[:no_booking],
@@ -16,8 +17,8 @@ class Training < ApplicationRecord
   scope :by_schedule, ->(sch_id) {where('schedule_id = ?', sch_id) if (sch_id.present?)}
   scope :by_store, ->(str_id) {joins(:schedule).where('schedules.store_id = ?', str_id) if (str_id.present?)}
   scope :by_customer, ->(cst_id) {where('customer_id = ?', cst_id) if (cst_id.present?)}
-  scope :from_date, ->(from){where("date(schedules.start_time AT TIME ZONE 'CST') >= ?",from) if (from.present?)}
-  scope :to_date, ->(to){where("date(schedules.start_time AT TIME ZONE 'CST') <= ?", to) if (to.present?)}
+  scope :from_date, ->(from){where("#{ START_DATE_IN_CST } >= ?",from) if (from.present?)}
+  scope :to_date, ->(to){where("#{ START_DATE_IN_CST } <= ?", to) if (to.present?)}
 
   enum booking_status: {
     no_booking: -1,
@@ -99,39 +100,39 @@ class Training < ApplicationRecord
 
   private
 
-  def check_customer_membership
-
-    @membership_times_variance = 0
-
-    #区分新增和修改
-    if self.id
-      old_booking_status = Training.find_by_id(self.id).try(:booking_status)
-      old_training_status = Training.find_by_id(self.id).try(:training_status)
-
-      @membership_times_variance = compare_booking_status(old_booking_status,self.booking_status) if self.changed.include? "booking_status"
-      @membership_times_variance = compare_training_status(old_training_status, self.training_status) if self.changed.include? "training_status"
-    else
-      @membership_times_variance = -1
-    end
-  end
-
-  def change_customer_membership
-    if @membership_times_variance != 0
-      self.customer.membership_remaining_times += @membership_times_variance
-      self.customer.save
-    end
-  end
-
-  def compare_booking_status(old, new)
-    watch_vars  = ['booked', 'waiting_confirmed']
-    return 0 if old == new || (!watch_vars.include?(old) && !watch_vars.include?(new))
-    return 1 if watch_vars.include?(old) && !watch_vars.include?(new)
-    return -1 if !watch_vars.include?(old) && watch_vars.include?(new)
-  end
-
-  def compare_training_status(old, new)
-    return 0 if old == new || (old != 'absence' && new != 'absence')
-    return -1 if old == 'absence' && new != 'absence'
-    return 1 if old != 'absence' && new == 'absence'
-  end
+#  def check_customer_membership
+#
+#    @membership_times_variance = 0
+#
+#    #区分新增和修改
+#    if self.id
+#      old_booking_status = Training.find_by_id(self.id).try(:booking_status)
+#      old_training_status = Training.find_by_id(self.id).try(:training_status)
+#
+#      @membership_times_variance = compare_booking_status(old_booking_status,self.booking_status) if self.changed.include? "booking_status"
+#      @membership_times_variance = compare_training_status(old_training_status, self.training_status) if self.changed.include? "training_status"
+#    else
+#      @membership_times_variance = -1
+#    end
+#  end
+#
+#  def change_customer_membership
+#    if @membership_times_variance != 0
+#      self.customer.membership_remaining_times += @membership_times_variance
+#      self.customer.save
+#    end
+#  end
+#
+#  def compare_booking_status(old, new)
+#    watch_vars  = ['booked', 'waiting_confirmed']
+#    return 0 if old == new || (!watch_vars.include?(old) && !watch_vars.include?(new))
+#    return 1 if watch_vars.include?(old) && !watch_vars.include?(new)
+#    return -1 if !watch_vars.include?(old) && watch_vars.include?(new)
+#  end
+#
+#  def compare_training_status(old, new)
+#    return 0 if old == new || (old != 'absence' && new != 'absence')
+#    return -1 if old == 'absence' && new != 'absence'
+#    return 1 if old != 'absence' && new == 'absence'
+#  end
 end
