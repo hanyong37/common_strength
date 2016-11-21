@@ -1,6 +1,20 @@
 class ScheduleOperation
   alias :read_attribute_for_serialization :send
-  attr_accessor :id, :schedule_id, :customer_id, :is_membership_valid, :bookable, :waitable, :booking_status, :schedule_reject_msg,:customer_is_locked, :customer_membership_type, :customer_duedate, :customer_remainming_times, :customer_reject_msg
+  attr_accessor :id,
+    :schedule_id,
+    :customer_id,
+    :is_membership_valid,
+    :bookable,
+    :waitable,
+    :cancelable,
+    :cancel_id,
+    :booking_status,
+    :schedule_reject_msg,
+    :customer_is_locked,
+    :customer_membership_type,
+    :customer_duedate,
+    :customer_remainming_times,
+    :customer_reject_msg
 
   def self.model_name
     @_model_name ||= ActiveModel::Name.new(self)
@@ -13,6 +27,8 @@ class ScheduleOperation
     @id  = schedule.id.to_s+'_'+customer.id.to_s
     @schedule_id = schedule.id
     @customer_id = customer.id
+    @cancelable = false
+    @cancel_id = -1
 
 
     #check schedule availability
@@ -21,6 +37,8 @@ class ScheduleOperation
       @bookable = false
       @waitable = false
       @schedule_reject_msg = '你已经预约过该课程！'
+      @cancelable = schedule.cancelable
+      @cancel_id = Training.where(schedule_id: schedule.id, customer_id: customer_id).first.id if @cancelable
     else
       @booking_status = 'not_booked'
       @bookable = schedule.bookable

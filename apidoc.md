@@ -70,7 +70,8 @@ author: Chen Xi
 2015-11-17 | 提交报表；修改bug；进入验收测试阶段；
 2016-11-18 | 测试与修改Bug：BUG统计：<span style="color:red">未关闭:10, 已关闭：55（关闭11，新增5）</span>
 2016-11-19 | 修改提示有关的bug；与罗超对测试结果，记录流程修改3条，UI调整10条，bug反馈10条；
-2016-11-20 | 修改3个流程大改动；
+2016-11-20 | 修改3个流程大改动；修改微信首页的logo效果；
+2016-11-21 | 前端的流程改动完成；<br>复查罗超的bug清单，将未完成的提交到tower：<br>BUG统计：<span style="color:red">未关闭:18, 已关闭：63（关闭8，新增16）</span>
 
 
 
@@ -94,14 +95,9 @@ author: Chen Xi
 
 需要注意的变化：
 <div style='color:red'>
-1. 客户，新增属性： membership_total_times, 此属性用于创建和修改；membership_remaining_times, 变成只读属性；显示客户时去掉weixin，token字段 修改的接口文档：2.1，2.2，2.3，2.5；
-2. schedule_operation接口，新增两个字段：schedule_reject_msg, customer_reject_msg, 用于输出在特定情况下的用户消息；修改的文档见11.6，11.7
-3. booking_limit_minutes | 课程允许预约时间（分钟）|课程开始前？分钟，客户可以预约。文档更新：4.1
-4. Training，流程调整：取消即删除，时间到默认为完成；涉及到的接口调整有：
-  a. 取消两个booking_status状态：cancelled 和 waiting_confirmed, 取消一个training_status 状态；接口更新：9， 9.1,
-  b. 取消训练的接口9.2,11.10
-  c. 增加两个只读字段： readable_status,  cancelable: 接口更新：9。11.8；11.9；
-5. 报表：字段简化，增加门店过滤  见接口修改：12.2, 12.1.
+接口11.4， 增加课程统计的字段，用于显示在微信“我的资料”界面；
+接口11.6， 增加两个字段，是否可取消，以及，如果可以取消，对应的training id；
+  
 </div>
 
 <p id="0"/>
@@ -1583,36 +1579,30 @@ URI |  /weixin/my_info
 ```json
 {
     "data": {
-        "id": "2",
+        "id": "3",
         "type": "customers",
         "attributes": {
-            "name": "李四",
-            "mobile": "18912345678",
-            "weixin": "wx234567",
-            "membership-type": "time_card",
-            "store-id": 2,
-            "membership-remaining-times": 20,
-            "membership-duedate": "2016-01-23",
-            "store-name": "大望路店",
+            "name": "chenxi",
+            "mobile": "18011520426",
+            "is-weixin-connected": true,
+            "membership-type": "measured_card",
+            "store-id": 1,
+            "membership-remaining-times": -15,
+            "membership-total-times": 20,
+            "membership-duedate": "2016-12-31",
+            "store-name": "中关村店",
             "is-locked": false,
-            "token": "xV1EcD14KizcsqUeh6dSuVvZ"
-        },
-        "relationships": {
-            "trainings": {
-                "data": [
-                    {
-                        "id": "3",
-                        "type": "trainings"
-                    },
-                    {
-                        "id": "6",
-                        "type": "trainings"
-                    }
-                 ]
-            }
+            "weixin": "aasdfjasdf",
+            "token": "DvX5EUWwVFGN48VA68tBNLyk",
+            "booked-number": 51,
+            "booked-and-not-started-number": 32,
+            "booked-and-complete-number": 14,
+            "booked-and-be-late-number": 0,
+            "booked-and-absence-number": 5
         }
     }
 }
+
 ```
 
 
@@ -1658,12 +1648,14 @@ URI |  http://{{sitename}}/weixin/schedules/1137/schedule_operations
 ```json
 {
     "data": {
-        "id": "16_3",
+        "id": "14_3",
         "type": "schedule-operations",
         "attributes": {
-            "schedule-id": 16,
+            "schedule-id": 14,
             "bookable": false,
             "waitable": false,
+            "cancelable": false, 	//是否可取消，
+            "cancel-id": -1,  	//如果可以取消，对应的training-id，如果不可以，给-1
             "booking-status": "booked",
             "schedule-reject-msg": "你已经预约过该课程！",
             "customer-id": 3,
@@ -1671,11 +1663,12 @@ URI |  http://{{sitename}}/weixin/schedules/1137/schedule_operations
             "customer-is-locked": false,
             "customer-membership-type": "measured_card",
             "customer-duedate": "2016-12-31",
-            "customer-remainming-times": -18,
+            "customer-remainming-times": -15,
             "customer-reject-msg": "您的已经没有可用的预约次数了！"
         }
     }
 }
+
 ```
 
 ## 11.7 预约（排队）课程

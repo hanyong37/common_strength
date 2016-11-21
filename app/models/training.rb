@@ -24,6 +24,7 @@ class Training < ApplicationRecord
   scope :attended, ->{where("training_status <> ?", training_statuses[:absence]) }
 
   scope :finished, ->{joins(:schedule).where("schedules.end_time < ?", DateTime.now) }
+  scope :not_started, ->{joins(:schedule).where("schedules.end_time >= ?", DateTime.now) }
 
   #客户预约后为booked
   #客户取消后删除记录
@@ -99,7 +100,7 @@ class Training < ApplicationRecord
   end
 
   def cancelable
-     ['booked','waiting'].include?(booking_status) && in_cancel_limit_minutes
+     ['booked','waiting'].include?(booking_status) && schedule.cancelable
   end
 
 
@@ -160,12 +161,9 @@ class Training < ApplicationRecord
 #    return 1 if old != 'absence' && new == 'absence'
 #  end
 
-  def in_cancel_limit_minutes
-    DateTime.now.advance(minutes: Setting.cancel_limit_minutes) < schedule.start_time
-  end
 
   def check_queue
-    if in_cancel_limit_minutes
+    if schedule.cancelable
       number = schedule.capacity - schedule.booked_number
       if number > 0 && schedule.waiting_number > 0
         number.times do

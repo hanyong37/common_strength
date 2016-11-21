@@ -53,6 +53,10 @@ class Schedule < ApplicationRecord
     in_booking_limit_days && !in_capacity && in_queue_limit_number
   end
 
+  def cancelable
+    in_cancel_limit_minutes
+  end
+
   def time_stage
     if DateTime.now >= end_time
       return 'finished'
@@ -75,6 +79,11 @@ class Schedule < ApplicationRecord
 
 
   private
+
+  def in_cancel_limit_minutes
+    DateTime.now.advance(minutes: Setting.cancel_limit_minutes) < start_time
+  end
+
   def in_booking_limit_days
     start_time.to_date <= Date.today+Setting.booking_limit_days.days
   end
