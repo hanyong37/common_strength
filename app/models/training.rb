@@ -100,9 +100,22 @@ class Training < ApplicationRecord
   end
 
   def cancelable
-     ['booked','waiting'].include?(booking_status) && schedule.cancelable
+     ['no_booking','booked','waiting'].include?(booking_status) && schedule.cancelable
   end
 
+
+  private
+
+  def check_queue
+    if schedule.cancelable
+      number = schedule.capacity - schedule.booked_number
+      if number > 0 && schedule.waiting_number > 0
+        number.times do
+          schedule.trainings.waiting.time_asc.first.update(booking_status: 'booked')
+        end
+      end
+    end
+  end
 
   #def rebookable
   #  if self.customer.membership_type == 'measured_card'
@@ -123,7 +136,6 @@ class Training < ApplicationRecord
   #  self.update(booking_status: 'waiting') and return if rebookable && schedule.waitable
   #end
 
-  private
 
 #  def check_customer_membership
 #
@@ -162,15 +174,5 @@ class Training < ApplicationRecord
 #  end
 
 
-  def check_queue
-    if schedule.cancelable
-      number = schedule.capacity - schedule.booked_number
-      if number > 0 && schedule.waiting_number > 0
-        number.times do
-          schedule.trainings.waiting.time_asc.first.update(booking_status: 'booked')
-        end
-      end
-    end
-  end
 
 end
