@@ -64,7 +64,7 @@ class ScheduleOperation
         @customer_reject_msg = '您的会员卡已经到期！' unless @is_membership_valid
       when 'measured_card'
         @is_membership_valid = @customer_remainming_times >= 1
-        @customer_reject_msg = '您的已经没有可用的预约次数了！' unless @is_membership_valid
+        @customer_reject_msg = '您已经没有可用的预约次数了！' unless @is_membership_valid
       else
         @is_membership_valid = false
       end
