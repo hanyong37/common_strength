@@ -1,6 +1,6 @@
 class Weixin::MySchedulesController < Weixin::ApplicationController
   def index
-    get_schedules(Date.today)
+    get_schedules(Date.today.to_s)
     render json: @schedules
   end
 

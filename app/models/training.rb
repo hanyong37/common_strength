@@ -11,8 +11,8 @@ class Training < ApplicationRecord
   scope :by_schedule, ->(sch_id) {where('schedule_id = ?', sch_id) if (sch_id.present?)}
   scope :by_store, ->(str_id) {joins(:schedule).where('schedules.store_id = ?', str_id) if (str_id.present?)}
   scope :by_customer, ->(cst_id) {where('customer_id = ?', cst_id) if (cst_id.present?)}
-  scope :from_date, ->(from){where("#{ START_DATE_IN_CST } >= ?",from) if (from.present?)}
-  scope :to_date, ->(to){where("#{ START_DATE_IN_CST } <= ?", to) if (to.present?)}
+  scope :from_date, ->(from){where(" schedules.start_time >= ?",Time.parse(from).beginning_of_day) if (from.present?)}
+  scope :to_date, ->(to){where("schedules.start_time <= ?", Time.parse(to).end_of_day) if (to.present?)}
 
   scope :time_desc, -> {joins(:schedule).order('schedules.start_time desc')}
   scope :time_asc, -> {joins(:schedule).order('schedules.start_time asc')}

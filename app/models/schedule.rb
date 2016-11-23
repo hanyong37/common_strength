@@ -8,13 +8,14 @@ class Schedule < ApplicationRecord
 
   scope :by_store , ->(store) {where(store_id: store) if store.present?}
   scope :by_course , ->(course) {where(course_id: course) if course.present?}
-  scope :by_date , ->(date) { where("#{START_DATE_IN_CST} = ?", date) if date.present?}
+  scope :by_date , ->(date) { where(start_time: time_range_of_a_day(date)) if date.present?}
 
-  scope :by_week , ->(monday_date) { where("#{START_DATE_IN_CST} >= ? and #{START_DATE_IN_CST} <= ?", Date.parse(monday_date), Date.parse(monday_date)+6.days) if monday_date.present? && (begin Date.parse(monday_date); rescue ArgumentError;  false; end)}
+  scope :by_week , ->(date) { where(start_time: time_range_of_a_week(date)) if date.present?}
 
-  scope :viewable , -> {where("is_published = ? and #{START_DATE_IN_CST} < ?",true, Date.today.advance(days: Setting.course_view_days.days))}
+  scope :viewable , -> {where("is_published = ? and start_time < ?",true, DateTime.now.advance(days: Setting.course_view_days.days))}
   scope :time_asc, ->{order(start_time: :asc)}
   #scope :published, -> {where(is_published:true)}
+
 
   def store_name
     store.name
