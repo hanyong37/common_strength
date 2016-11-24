@@ -66,13 +66,14 @@ class Admin::SchedulesByWeekController <  Admin::ApplicationController
   end
 
   def do_copy(from_week, to_week)
-    gap =  Date.parse(to_week) - Date.parse(from_week)
+    gap =  Date.parse(to_week).monday - Date.parse(from_week).monday
     from_list = @schedules
     new_list = []
     from_list.each do |scd|
       new_scd = scd.dup
       new_scd.start_time += gap.days
       new_scd.end_time += gap.days
+      new_scd.is_published += false
       new_scd.save!
       new_list << new_scd
     end
