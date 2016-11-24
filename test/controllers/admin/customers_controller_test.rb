@@ -7,7 +7,8 @@ class CustomersControllerTest < ActionDispatch::IntegrationTest
                                     mobile: 18912344321,
                                     weixin: 'foo_wx',
                                     store: stores(:one),
-                                    membership_type: 'time_card')
+                                    membership_type: 'time_card',
+                                    membership_duedate: Date.today.advance(days: 30))
   end
 
   test "should get index" do
@@ -23,6 +24,7 @@ class CustomersControllerTest < ActionDispatch::IntegrationTest
                               name: 'chenxi',
                               weixin: 'chenxi_wx',
                               store_id: stores(:one).id,
+                              membership_duedate: Date.today.advance(days: 30),
                               membership_type: 'time_card' } },
                               headers: auth_header,
                               as: :json)

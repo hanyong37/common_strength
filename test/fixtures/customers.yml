@@ -26,4 +26,4 @@ dapeng:
   token: <%=SecureRandom.base58(25) %>
   store: two
   membership_type: time_card
-  membership_total_times: 10
+  membership_duedate: 2016-10-31

@@ -10,7 +10,7 @@ class Admin::UnpublishAllController < Admin::PublishAllController
   private
 
   def destroy_conflict?
-    Schedule.joins(:trainings).where(set_conditions(:schedules_by_week_id)).count > 0
+    Schedule.joins(:trainings).by_store(params[:store_id]).by_week(params[:schedules_by_week_id]).count > 0
   end
 
   def check_unpublish_conflict

@@ -8,7 +8,7 @@ class Admin::PublishAllController < Admin::SchedulesByWeekController
   private
 
   def check_param_or_error
-    target_week = get_beginning_of_week(params[:schedules_by_week_id])
+    target_week = Date.parse(params[:schedules_by_week_id]) rescue nil
 
     if target_week.blank?
       render_params_error("params 'target_week'  must be given as as '%y-%m-%d'") and return  false
@@ -18,7 +18,7 @@ class Admin::PublishAllController < Admin::SchedulesByWeekController
   end
 
   def find_target_list_or_error
-    @target_list = Schedule.where(set_conditions(:schedules_by_week_id))
+    @target_list = Schedule.by_store(params[:store_id]).by_week(params[:schedules_by_week_id])
 
     if @target_list.size == 0
       render_not_found_error("Can't find any schedules in target_week!!")
