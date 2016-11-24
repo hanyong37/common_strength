@@ -84,4 +84,17 @@ class Weixin::ScheduleOperationsControllerTest < ActionDispatch::IntegrationTest
     assert_not jresponse['data']['attributes']['waitable']
   end
 
+  test "can't book or wait if daily_booking_limit_number reached" do
+    @schedule_new.update(is_published: true)
+    Setting.daily_booking_limit_number = 1
+    Training.create(schedule_id: @schedule_new.id, customer_id: customers(:luochao).id, booking_status: 'booked', training_status:'normal')
+    @schedule_2 = @schedule_new.dup
+    @schedule_2.save
+    get '/weixin/schedules/'+@schedule_2.id.to_s+'/schedule_operations', headers: weixin_auth_header
+    assert_response :success
+    assert_not jresponse['data']['attributes']['bookable']
+    assert_not jresponse['data']['attributes']['schedule_reject_msg'] == '同一天只能预约1个课程！'
+
+  end
+
 end

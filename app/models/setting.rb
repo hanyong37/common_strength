@@ -4,7 +4,8 @@ class Setting < ApplicationRecord
     course_view_days: 3,    #允许用户查看？天的课程
     cancel_limit_minutes: 4,#允许用户提前？分钟可以取消，以及自动确认排队；
     queue_limit_number: 5 , #排队人数限制
-    booking_limit_minutes: 1#允许用户提前？分钟可以取消，以及自动确认排队；
+    booking_limit_minutes: 1, #允许用户提前？分钟可以取消，以及自动确认排队；
+    daily_booking_limit_number: 6 #每天允许的预约次数
   }
 
   def self.booking_limit_days
@@ -44,7 +45,16 @@ class Setting < ApplicationRecord
   end
 
   def self.booking_limit_minutes=(value)
-    Setting.find_or_create_by(key: :booking_limit_minutes).booking_limit_minutes(value: value.to_s)
+    Setting.find_or_create_by(key: :booking_limit_minutes).update(value: value.to_s)
+  end
+
+
+  def self.daily_booking_limit_number
+    Setting.find_or_create_by(key: :daily_booking_limit_number).value.to_i
+  end
+
+  def self.daily_booking_limit_number=(value)
+    Setting.find_or_create_by(key: :daily_booking_limit_number).update(value: value.to_s)
   end
 
 end

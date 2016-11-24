@@ -54,9 +54,11 @@ class ScheduleOperation
       else
         @is_membership_valid = false
       end
+
     end
 
     #check schedule availability
+
     if Training.where(schedule_id: schedule.id, customer_id: customer_id).any?
       @booking_status = Training.where(schedule_id: schedule.id, customer_id: customer_id).first.booking_status
       @bookable = false
@@ -64,6 +66,10 @@ class ScheduleOperation
       @schedule_reject_msg = '已预约，现无法取消！'
       @cancelable = schedule.cancelable
       @cancel_id = Training.where(schedule_id: schedule.id, customer_id: customer_id).first.id if @cancelable
+    elsif not  in_daily_booking_limit_number
+      @schedule_reject_msg = "同一天只能预约#{Setting.daily_booking_limit_number}个课程！"
+      @bookable = false
+      @waitable = false
     else
       @booking_status = 'not_booked'
       @bookable = schedule.bookable
@@ -71,5 +77,12 @@ class ScheduleOperation
       @schedule_reject_msg = schedule.reject_msg
     end
   end
+
+    private
+
+    def in_daily_booking_limit_number
+      check_date = Schedule.find(@schedule_id).start_time.localtime.to_date.to_s
+      Training.joins(:schedule).valid_booking.by_customer(@customer_id).from_date(check_date).to_date(check_date).size < Setting.daily_booking_limit_number
+    end
 
 end

@@ -1,7 +1,7 @@
 class Admin::SchedulesByWeekController <  Admin::ApplicationController
   def show
     #@schedules = Schedule.bywhere(set_conditions(:id))
-    @schedules=Schedule.by_store(params[:store_id]).by_week(params[:id])
+    @schedules=Schedule.by_store(params[:store_id]).by_week(params[:id]).time_asc
     render json: @schedules
   end
 
