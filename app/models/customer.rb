@@ -20,9 +20,9 @@ class Customer < ApplicationRecord
   def show_status
     if is_locked
       '已锁定'
-    elsif membership_type == 'time_card' && membership_remaining_times < 1
+    elsif measured_card? && membership_remaining_times < 1
       '无次数'
-    elsif  membership_type == 'measured_card' && membership_duedate < Date.today
+    elsif time_card? && membership_duedate < Date.today
       '已逾期'
     else
       '正常'
