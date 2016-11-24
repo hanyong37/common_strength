@@ -86,7 +86,7 @@ class Schedule < ApplicationRecord
   end
 
   def in_booking_limit_days
-    start_time <= Time.now.yesterday.advance(days: Setting.booking_limit_days.days)
+    start_time <= Time.now.yesterday.end_of_day.advance(days: Setting.booking_limit_days)
   end
 
   def in_booking_limit_minutes
