@@ -34,8 +34,12 @@ class CustomerReport
     @count_of_complete = trainings.valid_booking.attended.size
     @count_of_be_late = trainings.valid_booking.be_late.size
 
-    @favorite_time_slots = trainings.unscoped.joins(:schedule).group('to_char(schedules.start_time, \'HH24:mm\') || \'~\' ||to_char(schedules.end_time, \'HH24:mm\')').count.sort_by{|k,v| v}.reverse.take(3).map{|e| e.join(',')}.join(' ')
-    @favarite_courses =  trainings.unscoped.joins(:schedule).group('schedules.course_id').count.sort_by{|id, count| count}.reverse.take(3).map{|e| "#{Course.find(e[0]).name}:#{e[1]}"}.join(',')
+    @favorite_time_slots = trainings.unscoped.joins(:schedule)
+    .group('to_char(schedules.start_time at time zone \'utc\', \'HH24:MI\') || \'~\' ||to_char(schedules.end_time at time zone \'utc\', \'HH24:MI\')')
+    .count.sort_by{|k,v| v}
+    .reverse.take(3).map{|e| "#{e[0]}(#{e[1]}次)"}.join(' | ')
+
+    @favarite_courses =  trainings.unscoped.joins(:schedule).group('schedules.course_id').count.sort_by{|id, count| count}.reverse.take(3).map{|e| "#{Course.find(e[0]).name}(#{e[1]}次)"}.join(' | ')
   end
 
   def self.all(store_id,from_date, to_date)

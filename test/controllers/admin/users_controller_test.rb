@@ -39,11 +39,21 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_response 200
   end
 
-  test "should destroy user" do
+  test "should destroy " do
     assert_difference('User.count', -1) do
       delete admin_user_url(@new_user), headers: auth_header , as: :json
     end
 
     assert_response 204
   end
+
+  test "should not destroy the last user" do
+    @new_user.destroy
+    assert_difference('User.count', 0) do
+      delete admin_user_url(@user), headers: auth_header , as: :json
+    end
+    assert_response 422
+
+  end
+
 end

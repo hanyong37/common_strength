@@ -9,7 +9,12 @@ class Admin::UsersController < Admin::ApplicationController
 
 
   def destroy
-    @user.destroy || render_error(@user, :unprocessable_entity)
+    if User.all.count > 1
+      @user.destroy || render_error(@user, :unprocessable_entity)
+    else
+      @user.errors.add(:id, 'the last user can not be deleted!')
+      render_error(@user, :unprocessable_entity)
+    end
   end
 
   def create
