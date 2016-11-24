@@ -73,7 +73,7 @@ class Admin::SchedulesByWeekController <  Admin::ApplicationController
       new_scd = scd.dup
       new_scd.start_time += gap.days
       new_scd.end_time += gap.days
-      new_scd.is_published += false
+      new_scd.is_published = false
       new_scd.save!
       new_list << new_scd
     end
