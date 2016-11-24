@@ -31,20 +31,6 @@ class ScheduleOperation
     @cancel_id = -1
 
 
-    #check schedule availability
-    if Training.where(schedule_id: schedule.id, customer_id: customer_id).any?
-      @booking_status = Training.where(schedule_id: schedule.id, customer_id: customer_id).first.booking_status
-      @bookable = false
-      @waitable = false
-      @schedule_reject_msg = '你已经预约过该课程！'
-      @cancelable = schedule.cancelable
-      @cancel_id = Training.where(schedule_id: schedule.id, customer_id: customer_id).first.id if @cancelable
-    else
-      @booking_status = 'not_booked'
-      @bookable = schedule.bookable
-      @waitable = schedule.waitable
-      @schedule_reject_msg = schedule.reject_msg
-    end
 
     #check customer availability
     @customer_is_locked = customer.is_locked
@@ -68,6 +54,21 @@ class ScheduleOperation
       else
         @is_membership_valid = false
       end
+    end
+
+    #check schedule availability
+    if Training.where(schedule_id: schedule.id, customer_id: customer_id).any?
+      @booking_status = Training.where(schedule_id: schedule.id, customer_id: customer_id).first.booking_status
+      @bookable = false
+      @waitable = false
+      @schedule_reject_msg = '已预约，现无法取消！'
+      @cancelable = schedule.cancelable
+      @cancel_id = Training.where(schedule_id: schedule.id, customer_id: customer_id).first.id if @cancelable
+    else
+      @booking_status = 'not_booked'
+      @bookable = schedule.bookable
+      @waitable = schedule.waitable
+      @schedule_reject_msg = schedule.reject_msg
     end
   end
 

@@ -6,7 +6,7 @@ class Admin::CustomersController < Admin::ApplicationController
     # TODO: change condition to scope;
     params.permit(:store_id, :qstring)
     @customers = paginate(Customer.where(set_conditions).by_locked(to_bool(params[:locked])))
-    render json: @customers ,fields: {customers: [:id, :name, :mobile, :is_weixin_connected, :membership_type, :store_id, :membership_remaining_times,:membership_total_times, :membership_duedate, :store_name, :is_locked]}, meta: paginate_meta(@customers)
+    render json: @customers ,fields: {customers: [:id, :name, :mobile, :is_weixin_connected, :membership_type, :store_id, :membership_remaining_times,:membership_total_times, :membership_duedate, :store_name, :is_locked, :show_status]}, meta: paginate_meta(@customers)
   end
 
   # GET /customers/1

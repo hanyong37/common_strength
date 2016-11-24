@@ -10,6 +10,7 @@ class CustomerSerializer < ActiveModel::Serializer
     :membership_duedate,
     :store_name,
     :is_locked,
+    :show_status,
     :weixin,
     :token,
     :booked_number,

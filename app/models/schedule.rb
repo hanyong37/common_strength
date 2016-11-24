@@ -12,7 +12,7 @@ class Schedule < ApplicationRecord
 
   scope :by_week , ->(date) { where(start_time: time_range_of_a_week(date)) if date.present?}
 
-  scope :viewable , -> {where("is_published = ? and start_time <= ?",true, DateTime.now.advance(days: Setting.course_view_days))}
+  scope :viewable , -> {where("is_published = ? and start_time <= ?", true, DateTime.now.yesterday.end_of_day.advance(days: Setting.course_view_days))}
   scope :time_asc, ->{order(start_time: :asc)}
   #scope :published, -> {where(is_published:true)}
 
@@ -51,7 +51,7 @@ class Schedule < ApplicationRecord
   end
 
   def waitable
-    in_booking_limit_days && !in_capacity && in_queue_limit_number
+    !in_capacity && in_queue_limit_number && in_booking_limit_days && in_booking_limit_minutes
   end
 
   def cancelable

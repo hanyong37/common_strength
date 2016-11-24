@@ -12,6 +12,7 @@ class Weixin::MyInfosController < Weixin::ApplicationController
                         :membership_duedate,
                         :store_name,
                         :is_locked,
+                        :show_status,
                         :booked_number,
                         :booked_and_not_started_number,
                         :booked_and_complete_number,
