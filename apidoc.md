@@ -73,6 +73,9 @@ author: Chen Xi
 2016-11-20 | 修改3个流程大改动；修改微信首页的logo效果；
 2016-11-21 | 前端的流程改动完成；<br>复查罗超的bug清单，将未完成的提交到tower：<br>BUG统计：<span style="color:red">未关闭:18, 已关闭：63（关闭8，新增16）</span>
 2016-11-22 | BUG统计：<span style="color:red">未关闭:8, 已关闭：80（关闭17，新增8）</span>
+2016-11-23 | 准备验收测试文档，以及修改bug；
+2016-11-24 | 晚上验收测试，发现7个问题，正在解决中；
+2016-11-24 | 
 
 
 
@@ -92,7 +95,7 @@ author: Chen Xi
 11.5-7 微信-课程预约	| 完成 | 完成 |😄 | 👀
 11.4 微信-个人信息	| 完成| 完成 | 😄 | 👌
 11.8 微信-预约查询，修改	| 完成| 完成| 😄 | 👀
-12 报表 	| 完成 | 完成 | 😄 | 👀
+12 报表 	| 完成 | 完成 | 😄 | 👌
 
 需要注意的变化：
 <div style='color:red'>
@@ -1628,11 +1631,15 @@ URI |  http://{{sitename}}/weixin/schedules/1137/schedule_operations
 
 页面显示建议：
 
-* 如果 booking_status, 为‘not booked’, 根据情况显示“预约”或者“排队”按钮；
-  - “bookable:true, waitable:false”: 显示“预约”按钮
-  - “bookable:false, waitable:true”: 显示“排队”按钮
-  - “bookable:false, waitable:false“: 显示原因：schedule-reject-msg；
-* 如果 is_membership_valid 是false，则在用户点击后提示错误原因：customer-reject-msg
+* 如果xxxable有true：
+  - “bookable:true”: 显示“预约”按钮
+  - “waitable:true”: 显示“排队”按钮
+  - “cancelable: true" 显示“取消”按钮，
+  		- “booking-status:waiting”,显示"取消排队"
+  		- “booking-status:其它”,显示"取消预约"
+  - “bookable:false, waitable:false，cancelabe：false“: 显示原因：schedule-reject-msg
+  
+* 如果显示的 is_membership_valid 是false，则在用户点击按钮后提示错误原因：customer-reject-msg
 
 > schedule_reject_msg:可能的值
   '你已经预约过该课程！'
@@ -1707,6 +1714,7 @@ URI |  /weixin/schedules/[schedule_id]/booking
 }
 ```
 
+
 ## 11.8 我的训练列表
 
  | API说明
@@ -1714,10 +1722,12 @@ URI |  /weixin/schedules/[schedule_id]/booking
 Method | Get
 URI |  /weixin/my_trainings/[param]
 参数类型 | URL
-参数 | 1.有[分页] (#0) <br>2.建议默认为all；<br>3.参数取值可以为：["no_booking", "booked", "waiting", "waiting_confirmed", "cancelled", "not_start", "absence", "be_late", "complete", "all"]，<br>--搜索范围是该登录用户所有的training记录。<br>4.对于训练客户只可能有2种操作：a.取消（cancelable） b.重新预约（rebookable）（如果已经取消）； 接口对每个训练给出了操作建议（基于数据返回时的状态），可以根据这两个状态显示操作项；
+参数 | 1.有[分页] (#0) <br>2.建议默认为all；<br>3.参数取值可以为：["no_booking", "booked", "waiting", "waiting_confirmed", "cancelled", "not_start", "absence", "be_late", "complete", "all"]，<br>--搜索范围是该登录用户所有的training记录。<br>
 消息 | 200：参数正确返回查询列表， 400:参数在列表之外；
 
-
+- 状态显示：直接显示 readable-status
+- （cancelable=true，booking-status:waiting） 显示取消"取消排队"按钮；
+- （cancelable=true，booking-status:其它） 显示取消"取消预约"按钮；
 
 ```json
 {
