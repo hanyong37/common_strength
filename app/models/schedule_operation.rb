@@ -46,7 +46,7 @@ class ScheduleOperation
     else
       case @customer_membership_type
       when 'time_card'
-        @is_membership_valid = @customer_duedate >= schedule.start_time.local_time.to_date
+        @is_membership_valid = @customer_duedate >= schedule.start_time.localtime.to_date
         @customer_reject_msg = '您的会员卡已经到期！' unless @is_membership_valid
       when 'measured_card'
         @is_membership_valid = @customer_remainming_times >= 1
