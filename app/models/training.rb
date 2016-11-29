@@ -107,7 +107,7 @@ class Training < ApplicationRecord
   private
 
   def check_queue
-    if schedule.cancelable
+    if schedule.bookable
       number = schedule.capacity - schedule.booked_number
       if number > 0 && schedule.waiting_number > 0
         number.times do
