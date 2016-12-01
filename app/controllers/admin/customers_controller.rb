@@ -5,10 +5,10 @@ class Admin::CustomersController < Admin::ApplicationController
   def index
     # TODO: change condition to scope;
     params.permit(:store_id, :qstring)
-    if params[:qstring] == 'show_all'
-      @customers = Customer.where(set_conditions).by_locked(to_bool(params[:locked]))
+    if params[:all].present?
+      @customers = Customer.where(set_conditions).by_locked(to_bool(params[:locked])).ordered.page(1).per(Customer.all.size)
     else
-      @customers = paginate(Customer.where(set_conditions).by_locked(to_bool(params[:locked])))
+      @customers = paginate(Customer.where(set_conditions).by_locked(to_bool(params[:locked])).ordered)
     end
     render json: @customers ,fields: {customers: [:id,
                                                   :name,

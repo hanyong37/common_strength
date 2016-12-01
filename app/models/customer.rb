@@ -11,6 +11,7 @@ class Customer < ApplicationRecord
 
   scope :by_store, ->(param) {where(store_id: param) if param.present? }
   scope :by_locked, ->(param) {where(is_locked: param) unless param.nil? }
+  scope :ordered, ->{order(id: :desc)}
 
   enum membership_type: {
     time_card: 1,
