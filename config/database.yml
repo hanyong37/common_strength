@@ -8,7 +8,7 @@ default: &default
 
 development:
   <<: *default
-  database: commonstrength_dev
+  database: commonstrength
 
 test:
   <<: *default
