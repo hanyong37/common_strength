@@ -5,7 +5,7 @@ class Admin::OperationsController < Admin::ApplicationController
   def index
 
     params.permit(:customer_id)
-    @operations = Operation.where(set_conditions)
+    @operations = Operation.where(set_conditions).order(created_at: :desc)
 
     render json: @operations
   end

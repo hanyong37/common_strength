@@ -3,7 +3,7 @@ class Admin::TrainingsController < Admin::ApplicationController
 
   # GET /trainings
   def index
-    @trainings = paginate(Training.by_store(params[:store_id]).by_schedule(params[:schedule_id]).by_customer(params[:customer_id]))
+    @trainings = paginate(Training.by_store(params[:store_id]).by_schedule(params[:schedule_id]).by_customer(params[:customer_id]).time_desc)
     render json: @trainings , meta: paginate_meta(@trainings)
   end
 
