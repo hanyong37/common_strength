@@ -45,6 +45,7 @@ class Admin::CustomersController < Admin::ApplicationController
     @customer = Customer.new(customer_params)
 
     if @customer.save
+      create_operation_new(@customer)
       render json: @customer, status: :created
     else
       render_error(@customer, :unprocessable_entity)
@@ -89,6 +90,15 @@ class Admin::CustomersController < Admin::ApplicationController
 
     condition = add_params_condition(condition, params[:qstring], qstring_clause, qstring_options)
 
+  end
+
+  def create_operation_new(customer)
+    operation = Operation.new(user_id: current_user.id,
+                              customer_id: customer.id,
+                              target: 'customer',
+                              description: "系统用户: '#{current_user.full_name}'创建了客户:'#{customer.name}', 会员类型： '#{customer.membership_type}', 会员到期时间:'#{customer.membership_duedate}', 会员卡次数:'#{customer.membership_total_times}' ",
+                             operation_memo: params[:operation_memo])
+    operation.save!
   end
 
   def create_operation(customer)

@@ -31,6 +31,8 @@ class CustomersControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response 201
+    cx = Customer.find_by_name 'chenxi'
+    assert_not_nil Operation.find_by_customer_id cx.id
   end
 
   test "should show customer" do
