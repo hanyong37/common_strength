@@ -82,7 +82,9 @@ class ScheduleOperation
 
     def in_daily_booking_limit_number
       check_date = Schedule.find(@schedule_id).start_time.localtime.to_date.to_s
-      Training.joins(:schedule).by_customer(@customer_id).from_date(check_date).to_date(check_date).size < Setting.daily_booking_limit_number
+      # 验证投放限制时，需要排除排队失败
+      trainings_for_count =  Training.joins(:schedule).by_customer(@customer_id).from_date(check_date).to_date(check_date)
+      trainings_for_count.size - trainings_for_count.wait_failed.size < Setting.daily_booking_limit_number
     end
 
 end

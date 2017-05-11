@@ -26,6 +26,9 @@ class Training < ApplicationRecord
   scope :finished, ->{joins(:schedule).where("schedules.end_time < ?", DateTime.now) }
   scope :not_started, ->{joins(:schedule).where("schedules.end_time >= ?", DateTime.now) }
 
+  #查询排队失败的预约
+  scope :wait_failed, ->{waiting.joins(:schedule).where("schedules.start_time <= ?", Setting.booking_limit_minutes.minutes.since) }
+
   #客户预约后为booked
   #客户取消后删除记录
   #客户排队后为waiting，排队成功为booked
