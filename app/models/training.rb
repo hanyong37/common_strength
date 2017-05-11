@@ -114,7 +114,7 @@ class Training < ApplicationRecord
       number = schedule.capacity - schedule.booked_number
       if number > 0 && schedule.waiting_number > 0
         number.times do
-          schedule.trainings.waiting.time_asc.first.update(booking_status: 'booked')
+          schedule.trainings.waiting.order(:id).first.update(booking_status: 'booked')
         end
       end
     end
