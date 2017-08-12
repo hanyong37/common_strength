@@ -86,6 +86,8 @@ class Schedule < ApplicationRecord
   end
 
   def in_booking_limit_days
+    #2017-8-12，按照罗超要求，预约n-1天后的课程启动时间改成晚上22:00，之前是00:00
+    #比如可约日期为2，那么8-12 21:59 只能预约 8-12，8-13的课程，22:00 后可以约8-12, 8-13, 8-14日的课程；
     start_time <= Time.now.advance(hours: 2).yesterday.end_of_day.advance(days: Setting.booking_limit_days)
   end
 
