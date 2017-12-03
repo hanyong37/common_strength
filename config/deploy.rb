@@ -10,7 +10,7 @@ require 'mina/rvm'    # for rvm support. (http://rvm.io)
 #   repository   - Git repo to clone from. (needed by mina/git)
 #   branch       - Branch name to deploy. (needed by mina/git)
 set :term_mode, :nil
-set :domain, '123.207.151.199'
+set :domain, '211.159.169.112'
 set :deploy_to, '/var/www/common_strength/api'
 set :repository, 'git://github.com/hanyong37/common_strength.git'
 set :branch, 'master'
@@ -36,7 +36,7 @@ task :environment do
   # invoke :'rbenv:load'
 
   # For those using RVM, use this to load an RVM version@gemset.
-   invoke :'rvm:use[ruby-2.3.1@cs]'
+   invoke :'rvm:use[ruby-2.3.1@default]'
 end
 
 # Put any custom mkdir's in here for when `mina setup` is ran.
