@@ -44,9 +44,21 @@ class CustomerReport
 
   def self.all(store_id,from_date, to_date)
     crs = []
-    Customer.by_store(store_id).each do |cst|
+    Customer.by_store(store_id).order("convert_to(name,'GBK') asc").each do |cst|
       crs << self.new(cst.id, from_date, to_date)
     end
-    return crs
+    crs.reject!{|x| x.count_of_valid_booking < 1 }
+
+    #将按名称排好序的元素按照count_of_complete分堆放好；
+    #然后对这些堆进行排序后，
+    #最后合并成一个数组
+    sorthash = Hash.new {|h,k| h[k]=[]}
+    crs.each do |item|
+      sorthash[item.count_of_complete] << item
+    end
+    sorted_crs = []
+    sorthash.keys.sort{|a,b| b <=> a}.each{|key| sorthash[key].each{|e| sorted_crs << e}}
+    #crs.sort!{|a, b| b.count_of_complete <=> a.count_of_complete }
+    return sorted_crs
   end
 end
