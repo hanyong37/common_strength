@@ -4,10 +4,10 @@ class Admin::OperationsController < Admin::ApplicationController
   # GET /operations
   def index
 
-    params.permit(:customer_id)
-    @operations = Operation.where(set_conditions).order(created_at: :desc)
+    params.permit(:customer_id, :page)
+    @operations = paginate(Operation.where(set_conditions).order(created_at: :desc))
 
-    render json: @operations
+    render json: @operations, meta: paginate_meta(@operations)
   end
 
   # GET /operations/1
