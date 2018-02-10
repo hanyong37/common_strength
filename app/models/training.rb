@@ -1,7 +1,7 @@
 class Training < ApplicationRecord
   validates_uniqueness_of :customer, scope: :schedule
 
-  belongs_to :customer, counter_cache: true
+  belongs_to :customer
   belongs_to :schedule
 
   #before_save :check_customer_membership, if: "self.customer.measured_card?"
