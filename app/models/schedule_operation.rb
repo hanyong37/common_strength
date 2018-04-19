@@ -63,7 +63,7 @@ class ScheduleOperation
       @booking_status = Training.where(schedule_id: schedule.id, customer_id: customer_id).first.booking_status
       @bookable = false
       @waitable = false
-      @schedule_reject_msg = '已预约，现无法取消！'
+      @schedule_reject_msg = @booking_status == 'waiting' ? '排队中' : '已预约，现无法取消！'
       @cancelable = schedule.cancelable
       @cancel_id = Training.where(schedule_id: schedule.id, customer_id: customer_id).first.id if @cancelable
     elsif not  in_daily_booking_limit_number
